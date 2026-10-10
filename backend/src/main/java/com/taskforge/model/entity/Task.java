@@ -19,19 +19,22 @@ import java.util.List;
 @Table(name = "tasks")
 public class Task {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
-    @Column(length = 254, nullable = false)
+    @Column(name = "title", length = 254, nullable = false)
     private String title;
-    @Column(length = 254)
+    @Column(name = "description", length = 254)
     private String description;
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name = "priority", nullable = false)
     private TaskPriority priority;
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name = "status", nullable = false)
     private TaskStatus status;
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
+    @Column(name = "completed_at")
     private LocalDateTime completedAt;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by_id", nullable = false)
