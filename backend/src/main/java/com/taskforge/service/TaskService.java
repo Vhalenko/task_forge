@@ -44,8 +44,10 @@ public class TaskService {
     }
 
     public TaskDTO createTask(CreateTaskRequestDTO dto) {
-        User creator = _userRepository.findById(dto.getCreatedBy()).orElseThrow();
-        User assignee = _userRepository.findById(dto.getAssignedTo()).orElseThrow();
+        User creator = _userRepository.findById(dto.getCreatedBy()).orElseThrow(() ->
+                new EntityNotFoundException("no creator with id: " + dto.getCreatedBy()));
+        User assignee = _userRepository.findById(dto.getAssignedTo()).orElseThrow(() ->
+                new EntityNotFoundException("no assignee with id: " + dto.getAssignedTo()));
         Task task = Task.builder()
                 .title(dto.getTitle())
                 .priority(TaskPriority.valueOf(dto.getPriority()))
@@ -54,15 +56,13 @@ public class TaskService {
                 .assignedTo(assignee)
                 .build();
 
-        _taskRepository.save(task);
-        return _taskMapper.toTaskDto(task);
+        return _taskMapper.toTaskDto(_taskRepository.save(task));
     }
 
     @Transactional
     public TaskDTO updateTask(Long id, UpdateTaskRequestDTO dto) {
-        Task task = _taskRepository.findById(id)
-                .orElseThrow(() ->
-                        new EntityNotFoundException("Task not found: " + id));
+        Task task = _taskRepository.findById(id).orElseThrow(() ->
+                        new EntityNotFoundException("no task with id: " + id));
 
         task.setTitle(dto.getTitle());
         task.setDescription(dto.getDescription());
@@ -71,13 +71,17 @@ public class TaskService {
 
         if (!task.getAssignedTo().getId().equals(dto.getAssignedTo())) {
             task.setAssignedTo(_userRepository.findById(dto.getAssignedTo())
-                    .orElseThrow());
+                    .orElseThrow(() ->
+                            new EntityNotFoundException("no assignee with id: " + dto.getAssignedTo())));
         }
 
         return _taskMapper.toTaskDto(task);
     }
 
     public void deleteTask(Long id) {
+        _taskRepository.findById(id).orElseThrow(() ->
+                new EntityNotFoundException("no task found with id: " + id));
+
         _taskRepository.deleteById(id);
     }
 }
