@@ -1,10 +1,11 @@
 package com.taskforge.controller;
 
+import com.taskforge.model.dto.CreateTaskRequestDTO;
 import com.taskforge.model.dto.TaskDTO;
+import com.taskforge.model.dto.UpdateTaskRequestDTO;
 import com.taskforge.model.entity.Task;
 import com.taskforge.service.TaskService;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,15 +33,15 @@ public class TaskController {
     }
 
     @PostMapping
-    public ResponseEntity<TaskDTO> createTask(@RequestBody Task task) {
+    public ResponseEntity<TaskDTO> createTask(@RequestBody CreateTaskRequestDTO dto) {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(_taskService.createTask(task));
+                .body(_taskService.createTask(dto));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<TaskDTO> updateTask(@RequestBody Task task) {
+    public ResponseEntity<TaskDTO> updateTask(@PathVariable Long id, @RequestBody UpdateTaskRequestDTO dto) {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(_taskService.updateTask(task));
+                .body(_taskService.updateTask(id, dto));
     }
 
     @DeleteMapping("/{id}")
