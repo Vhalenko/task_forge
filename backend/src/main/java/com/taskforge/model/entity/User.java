@@ -17,20 +17,21 @@ import java.util.List;
 @Table(name = "users")
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
-    @Column(length = 50, nullable = false)
+    @Column(name = "first_name", length = 50, nullable = false)
     private String firstName;
-    @Column(length = 50, nullable = false)
+    @Column(name = "last_name", length = 50, nullable = false)
     private String lastName;
-    @Column(length = 50)
+    @Column(name = "username", length = 50)
     private String username;
-    @Column(length = 254, nullable = false, unique = true)
+    @Column(name = "email", length = 254, nullable = false, unique = true)
     private String email;
-    @Column(nullable = false)
+    @Column(name = "password_hash", nullable = false)
     private String passwordHash;
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name = "role", nullable = false)
     private UserRole role;
     @OneToMany(mappedBy = "assignedTo", cascade = CascadeType.ALL)
     private List<Task> assignedTasks;

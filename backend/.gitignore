@@ -31,3 +31,15 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# Secrets and environment variables
+.env
+.env.*
+!.env.example
+
+# Local Spring configuration
+application-local.yaml
+application-local.yml
+
+# Postman
+/postman/
