@@ -3,15 +3,13 @@ package com.taskforge.controller;
 import com.taskforge.model.dto.ProjectDTO;
 import com.taskforge.model.dto.TaskDTO;
 import com.taskforge.model.dto.UserDTO;
+import com.taskforge.model.dto.request.UpdateProjectRequest;
 import com.taskforge.service.ProjectService;
 import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -44,5 +42,18 @@ public class ProjectController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(projectService.findTasks(id));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ProjectDTO> update(@PathVariable Long id, @RequestBody UpdateProjectRequest request) {
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(projectService.update(id, request));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        projectService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }
