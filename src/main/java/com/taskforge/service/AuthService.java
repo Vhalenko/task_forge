@@ -1,8 +1,7 @@
 package com.taskforge.service;
 
-import com.taskforge.mapper.UserMapper;
-import com.taskforge.model.dto.LoginRequestDTO;
-import com.taskforge.model.dto.RegisterRequestDTO;
+import com.taskforge.model.dto.request.LoginRequestDTO;
+import com.taskforge.model.dto.request.RegisterRequestDTO;
 import com.taskforge.model.dto.UserDTO;
 import com.taskforge.model.entity.User;
 import com.taskforge.model.enums.UserRole;
@@ -15,13 +14,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class AuthService {
     private final UserRepository userRepository;
-    private final UserMapper userMapper;
     private final BCryptPasswordEncoder passwordEncoder;
 
     @Autowired
-    public AuthService(UserRepository userRepository, UserMapper userMapper, BCryptPasswordEncoder passwordEncoder) {
+    public AuthService(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
-        this.userMapper = userMapper;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -35,7 +32,7 @@ public class AuthService {
                 .role(UserRole.valueOf(dto.getRole()))
                 .build();
 
-        return userMapper.toUserDto(userRepository.save(user));
+        return userRepository.save(user).toDto();
     }
 
     public UserDTO login(LoginRequestDTO dto) {
@@ -43,7 +40,7 @@ public class AuthService {
                 .orElseThrow(() -> new EntityNotFoundException("no user with email: " + dto.getEmail()));
 
         if (user.getPasswordHash().equals(passwordEncoder.encode(dto.getPassword()))) {
-            return userMapper.toUserDto(user);
+            return user.toDto();
         }
         else {
             throw new EntityNotFoundException("incorrect password or email");

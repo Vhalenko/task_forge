@@ -1,21 +1,22 @@
 package com.taskforge.model.dto;
 
+import com.taskforge.model.enums.TaskPriority;
+import com.taskforge.model.enums.TaskStatus;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 
 import java.time.LocalDateTime;
 
 
-@Data
+@Getter
 @AllArgsConstructor
 public class TaskDTO {
-    private Long id;
-    private String title;
-    private String description;
-    private String priority;
-    private String status;
-    private LocalDateTime createdAt;
-    private LocalDateTime completedAt;
-    private Long createdBy;
-    private Long assignedTo;
+    private final Long id;
+    private final String title;
+    private final String description;
+    private final TaskPriority priority;
+    private final TaskStatus status;
+    private final LocalDateTime dueDate;
+    private final LocalDateTime createdAt;
+    private final LocalDateTime completedAt;
 }

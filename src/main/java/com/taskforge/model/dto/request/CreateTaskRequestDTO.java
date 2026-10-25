@@ -1,8 +1,6 @@
-package com.taskforge.model.dto;
+package com.taskforge.model.dto.request;
 
 import lombok.Data;
-
-import java.time.LocalDateTime;
 
 @Data
 public class CreateTaskRequestDTO {

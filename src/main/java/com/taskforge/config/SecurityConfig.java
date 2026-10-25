@@ -16,11 +16,11 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(csrf -> csrf.disable())
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/","/api/auth/**").permitAll()
-                        .requestMatchers("/api/tasks/**").hasAnyRole(UserRole.ADMIN.name(), UserRole.MANAGER.name(), UserRole.USER.name())
-                        .requestMatchers("/api/users/**").hasRole(UserRole.ADMIN.name())
-                        .anyRequest().authenticated())
+//                .authorizeHttpRequests(auth -> auth
+//                        .requestMatchers("/","/api/auth/**").permitAll()
+//                        .requestMatchers("/api/tasks/**").hasAnyRole(UserRole.ADMIN.name(), UserRole.MANAGER.name(), UserRole.USER.name())
+//                        .requestMatchers("/api/users/**").hasRole(UserRole.ADMIN.name())
+//                        .anyRequest().authenticated())
                 .build();
     }
     @Bean

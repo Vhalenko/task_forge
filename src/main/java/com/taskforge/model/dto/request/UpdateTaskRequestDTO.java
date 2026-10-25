@@ -1,4 +1,4 @@
-package com.taskforge.model.dto;
+package com.taskforge.model.dto.request;
 
 import lombok.Data;
 
@@ -11,5 +11,4 @@ public class UpdateTaskRequestDTO {
     private String priority;
     private String status;
     private LocalDateTime completedAt;
-    private Long assignedTo;
 }
