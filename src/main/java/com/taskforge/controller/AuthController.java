@@ -1,7 +1,7 @@
 package com.taskforge.controller;
 
-import com.taskforge.model.dto.LoginRequestDTO;
-import com.taskforge.model.dto.RegisterRequestDTO;
+import com.taskforge.model.dto.request.LoginRequestDTO;
+import com.taskforge.model.dto.request.RegisterRequestDTO;
 import com.taskforge.model.dto.UserDTO;
 import com.taskforge.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/api/v1/auth")
 public class AuthController {
     private final AuthService authService;
 

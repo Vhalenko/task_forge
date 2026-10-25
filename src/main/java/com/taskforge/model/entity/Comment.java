@@ -1,5 +1,6 @@
 package com.taskforge.model.entity;
 
+import com.taskforge.model.dto.CommentDTO;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -16,19 +17,27 @@ public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private long id;
+    private Long id;
 
     @Column(name = "text", nullable = false, columnDefinition = "TEXT")
     private String text;
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "task_id", nullable = false)
     private Task task;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "author_id", nullable = false)
-    private User author;
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
+    public CommentDTO toDto() {
+        return new CommentDTO(
+                id,
+                text,
+                createdAt
+        );
+    }
 }

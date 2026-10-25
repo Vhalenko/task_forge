@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("api/users")
+@RequestMapping("api/v1/users")
 public class UserController {
     private final UserService userService;
 
@@ -19,15 +19,9 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping
-    public ResponseEntity<List<UserDTO>> getAll() {
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(userService.getAll());
-    }
-
     @GetMapping("/{id}")
-    public ResponseEntity<UserDTO> getById(@PathVariable Long id) {
+    public ResponseEntity<UserDTO> findById(@PathVariable Long id) {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(userService.getById(id));
+                .body(userService.findById(id));
     }
 }

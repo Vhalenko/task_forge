@@ -1,10 +1,12 @@
 package com.taskforge.model.entity;
 
+import com.taskforge.model.dto.UserDTO;
 import com.taskforge.model.enums.UserRole;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -17,7 +19,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private long id;
+    private Long id;
 
     @Column(name = "first_name", length = 20, nullable = false)
     private String firstName;
@@ -38,12 +40,42 @@ public class User {
     @Column(name = "role", nullable = false)
     private UserRole role;
 
-    @OneToMany(mappedBy = "assignedTo")
-    private List<Task> assignedTasks;
+    @Column(name = "is_blocked", nullable = false)
+    private boolean isBlocked;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "team_id")
+    private Team team;
+
+    @ManyToMany
+    @JoinTable(
+            name = "users_projects",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "project_id")
+    )
+    private List<Project> projects;
+
+    @ManyToMany
+    @JoinTable(
+            name = "task_assignees",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "task_id")
+    )
+    private Set<Task> assignedTasks;
 
     @OneToMany(mappedBy = "createdBy")
     private List<Task> createdTasks;
 
-    @OneToMany(mappedBy = "author")
+    @OneToMany(mappedBy = "user")
     private List<Comment> comments;
+
+    public UserDTO toDto() {
+        return new UserDTO(
+                id,
+                firstName,
+                lastName,
+                username,
+                email,
+                role);
+    }
 }

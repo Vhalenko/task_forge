@@ -1,5 +1,6 @@
 package com.taskforge.model.entity;
 
+import com.taskforge.model.dto.TaskDTO;
 import com.taskforge.model.enums.TaskPriority;
 import com.taskforge.model.enums.TaskStatus;
 import jakarta.persistence.*;
@@ -7,6 +8,7 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -19,7 +21,7 @@ public class Task {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private long id;
+    private Long id;
 
     @Column(name = "title", length = 100, nullable = false)
     private String title;
@@ -35,6 +37,9 @@ public class Task {
     @Column(name = "status", nullable = false)
     private TaskStatus status;
 
+    @Column(name = "due_date")
+    private LocalDateTime dueDate;
+
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
@@ -45,10 +50,31 @@ public class Task {
     @JoinColumn(name = "created_by_id", nullable = false)
     private User createdBy;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "assigned_to_id", nullable = false)
-    private User assignedTo;
-
     @OneToMany(mappedBy = "task", cascade = CascadeType.ALL)
     private List<Comment> comments;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "project_id", nullable = false)
+    private Project project;
+
+    @ManyToMany
+    @JoinTable(
+            name = "task_assignees",
+            joinColumns = @JoinColumn(name = "task_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
+    private Set<User> assignees;
+
+    public TaskDTO toDto() {
+        return new TaskDTO(
+                id,
+                title,
+                description,
+                priority,
+                status,
+                dueDate,
+                createdAt,
+                completedAt
+        );
+    }
 }

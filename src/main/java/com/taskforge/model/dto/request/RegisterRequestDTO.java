@@ -1,6 +1,5 @@
-package com.taskforge.model.dto;
+package com.taskforge.model.dto.request;
 
-import com.taskforge.model.enums.UserRole;
 import lombok.Data;
 
 
