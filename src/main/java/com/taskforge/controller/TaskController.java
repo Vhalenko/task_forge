@@ -3,12 +3,13 @@ package com.taskforge.controller;
 import com.taskforge.model.dto.CommentDTO;
 import com.taskforge.model.dto.TaskDTO;
 import com.taskforge.model.dto.request.CreateCommentRequest;
-import com.taskforge.model.dto.request.UpdateTaskRequestDTO;
-import com.taskforge.model.entity.Comment;
+import com.taskforge.model.dto.request.UpdateTaskRequest;
+import com.taskforge.security.CustomUserDetails;
 import com.taskforge.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -36,7 +37,7 @@ public class TaskController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<TaskDTO> update(@PathVariable Long id, @RequestBody UpdateTaskRequestDTO dto) {
+    public ResponseEntity<TaskDTO> update(@PathVariable Long id, @RequestBody UpdateTaskRequest dto) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(taskService.update(id, dto));
     }
@@ -62,8 +63,8 @@ public class TaskController {
     }
 
     @PostMapping("/{id}/comments")
-    public ResponseEntity<CommentDTO> saveComment(@PathVariable Long id, @RequestBody CreateCommentRequest request) {
+    public ResponseEntity<CommentDTO> saveComment(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails principal, @RequestBody CreateCommentRequest request) {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(taskService.saveComment(id, request));
+                .body(taskService.saveComment(id, principal.getUser().getId(), request));
     }
 }

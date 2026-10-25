@@ -1,4 +1,4 @@
-package com.taskforge.model.dto;
+package com.taskforge.exception;
 
 public record ExceptionResponseDTO (
         int status,
