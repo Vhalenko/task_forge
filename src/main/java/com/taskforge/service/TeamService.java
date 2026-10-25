@@ -1,9 +1,15 @@
 package com.taskforge.service;
 
+import com.taskforge.model.dto.ProjectDTO;
 import com.taskforge.model.dto.TeamDTO;
+import com.taskforge.model.dto.UserDTO;
+import com.taskforge.model.dto.request.CreateProjectRequest;
 import com.taskforge.model.dto.request.CreateTeamRequest;
+import com.taskforge.model.entity.Project;
 import com.taskforge.model.entity.Task;
 import com.taskforge.model.entity.Team;
+import com.taskforge.model.entity.User;
+import com.taskforge.repository.ProjectRepository;
 import com.taskforge.repository.TeamRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,10 +21,12 @@ import java.util.List;
 @Service
 public class TeamService {
     private final TeamRepository teamRepository;
+    private final ProjectRepository projectRepository;
 
     @Autowired
-    public TeamService(TeamRepository teamRepository) {
+    public TeamService(TeamRepository teamRepository, ProjectRepository projectRepository) {
         this.teamRepository = teamRepository;
+        this.projectRepository = projectRepository;
     }
 
     public List<TeamDTO> findAll() {
@@ -44,5 +52,39 @@ public class TeamService {
 
     public void delete(Long id) {
         teamRepository.deleteById(id);
+    }
+
+    public List<UserDTO> findUsers(Long id) {
+        Team team = teamRepository.findById(id).orElseThrow(() ->
+                new EntityNotFoundException("no team with id: " + id));
+
+        return team.getUsers()
+                .stream()
+                .sorted(Comparator.comparing(User::getId))
+                .map(User::toDto)
+                .toList();
+    }
+
+    public List<ProjectDTO> findProjects(Long id) {
+        Team team = teamRepository.findById(id).orElseThrow(() ->
+                new EntityNotFoundException("no team with id: " + id));
+
+        return team.getProjects()
+                .stream()
+                .sorted(Comparator.comparing(Project::getId))
+                .map(Project::toDto)
+                .toList();
+    }
+
+    public ProjectDTO saveProject(Long id, CreateProjectRequest request) {
+        Team team = teamRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("no team with id: " + id));
+
+        Project project = Project.builder()
+                .name(request.getName())
+                .team(team)
+                .build();
+
+        return projectRepository.save(project).toDto();
     }
 }

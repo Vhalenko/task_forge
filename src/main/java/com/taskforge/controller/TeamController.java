@@ -1,7 +1,10 @@
 package com.taskforge.controller;
 
+import com.taskforge.model.dto.ProjectDTO;
 import com.taskforge.model.dto.TaskDTO;
 import com.taskforge.model.dto.TeamDTO;
+import com.taskforge.model.dto.UserDTO;
+import com.taskforge.model.dto.request.CreateProjectRequest;
 import com.taskforge.model.dto.request.CreateTeamRequest;
 import com.taskforge.service.TeamService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +31,7 @@ public class TeamController {
                 .body(teamService.findAll());
     }
 
-    @GetMapping("{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<TeamDTO> findById(@PathVariable Long id) {
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -42,7 +45,28 @@ public class TeamController {
                 .body(teamService.save(request));
     }
 
-    @DeleteMapping("{id}")
+    @GetMapping("/{id}/users")
+    public ResponseEntity<List<UserDTO>> findUsers(@PathVariable Long id) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(teamService.findUsers(id));
+    }
+
+    @GetMapping("/{id}/projects")
+    public ResponseEntity<List<ProjectDTO>> findProjects(@PathVariable Long id) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(teamService.findProjects(id));
+    }
+
+    @PostMapping("/{id}/projects")
+    public ResponseEntity<ProjectDTO> saveProject(@PathVariable Long id, @RequestBody CreateProjectRequest request) {
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(teamService.saveProject(id, request));
+    }
+
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         teamService.delete(id);
         return ResponseEntity.noContent().build();
