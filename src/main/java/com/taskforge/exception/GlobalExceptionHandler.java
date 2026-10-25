@@ -1,6 +1,5 @@
 package com.taskforge.exception;
 
-import com.taskforge.model.dto.ExceptionResponseDTO;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;

@@ -2,8 +2,12 @@ package com.taskforge.model.dto.request;
 
 import lombok.Data;
 
+
 @Data
-public class LoginRequestDTO {
+public class RegisterRequest {
+    private String firstName;
+    private String lastName;
+    private String username;
     private String email;
     private String password;
 }

@@ -3,7 +3,7 @@ package com.taskforge.service;
 import com.taskforge.model.dto.CommentDTO;
 import com.taskforge.model.dto.TaskDTO;
 import com.taskforge.model.dto.request.CreateCommentRequest;
-import com.taskforge.model.dto.request.UpdateTaskRequestDTO;
+import com.taskforge.model.dto.request.UpdateTaskRequest;
 import com.taskforge.model.entity.Comment;
 import com.taskforge.model.entity.Task;
 import com.taskforge.model.entity.User;
@@ -47,7 +47,7 @@ public class TaskService {
     }
 
     @Transactional
-    public TaskDTO update(Long id, UpdateTaskRequestDTO dto) {
+    public TaskDTO update(Long id, UpdateTaskRequest dto) {
         Task task = taskRepository.findById(id).orElseThrow(() ->
                         new EntityNotFoundException("no task with id: " + id));
 
@@ -89,14 +89,18 @@ public class TaskService {
                 .toList();
     }
 
-    public CommentDTO saveComment(Long id, CreateCommentRequest request) {
-        Task task = taskRepository.findById(id).orElseThrow(() ->
-                new EntityNotFoundException("no task with id: " + id));
+    public CommentDTO saveComment(Long taskId, Long userId, CreateCommentRequest request) {
+        Task task = taskRepository.findById(taskId).orElseThrow(() ->
+                new EntityNotFoundException("no task with id: " + taskId));
 
-        Comment comment = new Comment().builder()
+        User user = userRepository.findById(userId).orElseThrow(() ->
+                new EntityNotFoundException("no task with id: " + userId));
+
+        Comment comment = Comment.builder()
                 .text(request.getText())
                 .createdAt(LocalDateTime.now())
                 .task(task)
+                .user(user)
                 .build();
         return comment.toDto();
     }

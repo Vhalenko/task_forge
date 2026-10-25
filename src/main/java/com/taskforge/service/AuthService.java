@@ -1,8 +1,8 @@
 package com.taskforge.service;
 
 import com.taskforge.model.dto.AuthDTO;
-import com.taskforge.model.dto.request.LoginRequestDTO;
-import com.taskforge.model.dto.request.RegisterRequestDTO;
+import com.taskforge.model.dto.request.LoginRequest;
+import com.taskforge.model.dto.request.RegisterRequest;
 import com.taskforge.model.dto.UserDTO;
 import com.taskforge.model.entity.User;
 import com.taskforge.model.enums.UserRole;
@@ -33,7 +33,7 @@ public class AuthService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public UserDTO register(RegisterRequestDTO dto) {
+    public UserDTO register(RegisterRequest dto) {
         String email = dto.getEmail().toLowerCase();
         if (userRepository.existsByEmailIgnoreCase(email)) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Email is in use");
@@ -51,7 +51,7 @@ public class AuthService {
         return userRepository.save(user).toDto();
     }
 
-    public AuthDTO login(LoginRequestDTO dto) {
+    public AuthDTO login(LoginRequest dto) {
         User user = userRepository.findByEmailIgnoreCase(dto.getEmail())
                 .orElseThrow(() -> new BadCredentialsException("incorrect email or password"));
 
