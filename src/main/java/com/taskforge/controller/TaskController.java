@@ -55,13 +55,13 @@ public class TaskController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("{id}/comments")
+    @GetMapping("/{id}/comments")
     public ResponseEntity<List<CommentDTO>> findComments(@PathVariable Long id) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(taskService.findComments(id));
     }
 
-    @PostMapping("{id}/comments")
+    @PostMapping("/{id}/comments")
     public ResponseEntity<CommentDTO> saveComment(@PathVariable Long id, @RequestBody CreateCommentRequest request) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(taskService.saveComment(id, request));
