@@ -2,16 +2,13 @@ package com.taskforge.exception;
 
 import com.taskforge.model.dto.ExceptionResponseDTO;
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.boot.webmvc.error.ErrorController;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.LockedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
-import javax.naming.AuthenticationException;
-import java.nio.file.AccessDeniedException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -37,5 +34,15 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(DataAccessException.class)
     public ResponseEntity<ExceptionResponseDTO> handleDataAccess(DataAccessException e) {
         return buildMessage(HttpStatus.INTERNAL_SERVER_ERROR, e);
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<ExceptionResponseDTO> badCredentials(BadCredentialsException e) {
+        return buildMessage(HttpStatus.UNAUTHORIZED, e);
+    }
+
+    @ExceptionHandler(LockedException.class)
+    public ResponseEntity<ExceptionResponseDTO> locked(LockedException e) {
+        return buildMessage(HttpStatus.FORBIDDEN, e);
     }
 }

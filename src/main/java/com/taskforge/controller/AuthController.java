@@ -1,5 +1,6 @@
 package com.taskforge.controller;
 
+import com.taskforge.model.dto.AuthDTO;
 import com.taskforge.model.dto.request.LoginRequestDTO;
 import com.taskforge.model.dto.request.RegisterRequestDTO;
 import com.taskforge.model.dto.UserDTO;
@@ -24,7 +25,7 @@ public class AuthController {
                 .body(authService.register(dto));
     }
     @GetMapping("/login")
-    public ResponseEntity<UserDTO> login(@RequestBody LoginRequestDTO dto) {
+    public ResponseEntity<AuthDTO> login(@RequestBody LoginRequestDTO dto) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(authService.login(dto));
     }
