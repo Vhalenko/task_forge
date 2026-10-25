@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -34,6 +35,7 @@ public class TaskService {
     public List<TaskDTO> findAll() {
         return this.taskRepository.findAll()
                 .stream()
+                .sorted(Comparator.comparing(Task::getId))
                 .map(Task::toDto)
                 .toList();
     }
@@ -80,7 +82,11 @@ public class TaskService {
         Task task = taskRepository.findById(id).orElseThrow(() ->
                 new EntityNotFoundException("no task with id: " + id));
 
-        return task.getComments().stream().map(Comment::toDto).toList();
+        return task.getComments()
+                .stream()
+                .sorted(Comparator.comparing(Comment::getCreatedAt).reversed())
+                .map(Comment::toDto)
+                .toList();
     }
 
     public CommentDTO saveComment(Long id, CreateCommentRequest request) {
