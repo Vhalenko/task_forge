@@ -1,6 +1,7 @@
 package com.taskforge.service;
 
 import com.taskforge.model.dto.TeamDTO;
+import com.taskforge.model.dto.request.CreateTeamRequest;
 import com.taskforge.model.entity.Task;
 import com.taskforge.model.entity.Team;
 import com.taskforge.repository.TeamRepository;
@@ -32,5 +33,16 @@ public class TeamService {
         Team team = teamRepository.findById(id).orElseThrow(() ->
                 new EntityNotFoundException("no team with id: " + id));
         return team.toDto();
+    }
+
+    public TeamDTO save(CreateTeamRequest request) {
+        Team team = Team.builder()
+                .name(request.getName())
+                .build();
+        return teamRepository.save(team).toDto();
+    }
+
+    public void delete(Long id) {
+        teamRepository.deleteById(id);
     }
 }

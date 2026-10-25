@@ -2,6 +2,7 @@ package com.taskforge.controller;
 
 import com.taskforge.model.dto.TaskDTO;
 import com.taskforge.model.dto.TeamDTO;
+import com.taskforge.model.dto.request.CreateTeamRequest;
 import com.taskforge.service.TeamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -32,5 +33,18 @@ public class TeamController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(teamService.findById(id));
+    }
+
+    @PostMapping
+    public ResponseEntity<TeamDTO> save(@RequestBody CreateTeamRequest request) {
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(teamService.save(request));
+    }
+
+    @DeleteMapping("{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        teamService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }
