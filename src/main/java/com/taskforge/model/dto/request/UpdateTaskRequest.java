@@ -1,15 +1,14 @@
-package com.taskforge.model.dto;
+package com.taskforge.model.dto.request;
 
 import lombok.Data;
 
 import java.time.LocalDateTime;
 
 @Data
-public class CreateTaskRequestDTO {
+public class UpdateTaskRequest {
     private String title;
     private String description;
     private String priority;
     private String status;
-    private Long createdBy;
-    private Long assignedTo;
+    private LocalDateTime completedAt;
 }

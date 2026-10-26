@@ -1,9 +1,9 @@
 package com.taskforge.service;
 
-import com.taskforge.mapper.TaskMapper;
-import com.taskforge.model.dto.CreateTaskRequestDTO;
+import com.taskforge.model.dto.CommentDTO;
 import com.taskforge.model.dto.TaskDTO;
-import com.taskforge.model.dto.UpdateTaskRequestDTO;
+import com.taskforge.model.dto.request.CreateCommentRequest;
+import com.taskforge.model.dto.request.UpdateTaskRequest;
 import com.taskforge.model.entity.Comment;
 import com.taskforge.model.entity.Task;
 import com.taskforge.model.entity.User;
@@ -14,54 +14,40 @@ import com.taskforge.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
-import java.util.ArrayList;
+import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
 public class TaskService {
     private final TaskRepository taskRepository;
-    private final UserService userService;
-    private final TaskMapper taskMapper;
-
+    private final UserRepository userRepository;
     @Autowired
-    public TaskService(TaskRepository taskRepository, UserService userService, TaskMapper taskMapper) {
+    public TaskService(TaskRepository taskRepository, UserRepository userRepository) {
         this.taskRepository = taskRepository;
-        this.userService = userService;
-        this.taskMapper = taskMapper;
+        this.userRepository = userRepository;
     }
 
-    public List<TaskDTO> getAllTasks() {
+    public List<TaskDTO> findAll() {
         return this.taskRepository.findAll()
                 .stream()
-                .map(taskMapper::toTaskDto)
+                .sorted(Comparator.comparing(Task::getId))
+                .map(Task::toDto)
                 .toList();
     }
 
-    public TaskDTO getTask(Long id) {
+    public TaskDTO findById(Long id) {
         Task task = this.taskRepository.findById(id).orElseThrow(() ->
                 new EntityNotFoundException("no task with id: " + id));
-        return taskMapper.toTaskDto(task);
-    }
-
-    public TaskDTO createTask(CreateTaskRequestDTO dto) {
-        User creator = userService.getById(dto.getCreatedBy());
-        User assignee = userService.getById(dto.getAssignedTo()).orElseThrow(() ->
-                new EntityNotFoundException("no assignee with id: " + dto.getAssignedTo()));
-        Task task = Task.builder()
-                .title(dto.getTitle())
-                .priority(TaskPriority.valueOf(dto.getPriority()))
-                .status(TaskStatus.valueOf(dto.getStatus()))
-                .createdBy(creator)
-                .assignedTo(assignee)
-                .build();
-
-        return taskMapper.toTaskDto(taskRepository.save(task));
+        return task.toDto();
     }
 
     @Transactional
-    public TaskDTO updateTask(Long id, UpdateTaskRequestDTO dto) {
+    public TaskDTO update(Long id, UpdateTaskRequest dto) {
         Task task = taskRepository.findById(id).orElseThrow(() ->
                         new EntityNotFoundException("no task with id: " + id));
 
@@ -70,19 +56,52 @@ public class TaskService {
         task.setPriority(TaskPriority.valueOf(dto.getPriority()));
         task.setStatus(TaskStatus.valueOf(dto.getStatus()));
 
-        if (task.getAssignedTo().getId() != (dto.getAssignedTo())) {
-            task.setAssignedTo(userService.findById(dto.getAssignedTo())
-                    .orElseThrow(() ->
-                            new EntityNotFoundException("no assignee with id: " + dto.getAssignedTo())));
-        }
-
-        return taskMapper.toTaskDto(task);
+        return task.toDto();
     }
 
-    public void deleteTask(Long id) {
+    public void delete(Long id) {
         taskRepository.findById(id).orElseThrow(() ->
                 new EntityNotFoundException("no task found with id: " + id));
 
         taskRepository.deleteById(id);
+    }
+
+    @Transactional
+    public void updateAssignee(Long taskId, Long userId) {
+        Task task = taskRepository.findById(taskId).orElseThrow(() ->
+                new EntityNotFoundException("no task found with id: " + taskId));
+        User user = userRepository.findById(userId).orElseThrow(() ->
+                new EntityNotFoundException("no task found with id: " + userId));
+
+        if (!task.getAssignees().add(user)) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "user is already assigned");
+        }
+    }
+
+    public List<CommentDTO> findComments(Long id) {
+        Task task = taskRepository.findById(id).orElseThrow(() ->
+                new EntityNotFoundException("no task with id: " + id));
+
+        return task.getComments()
+                .stream()
+                .sorted(Comparator.comparing(Comment::getCreatedAt).reversed())
+                .map(Comment::toDto)
+                .toList();
+    }
+
+    public CommentDTO saveComment(Long taskId, Long userId, CreateCommentRequest request) {
+        Task task = taskRepository.findById(taskId).orElseThrow(() ->
+                new EntityNotFoundException("no task with id: " + taskId));
+
+        User user = userRepository.findById(userId).orElseThrow(() ->
+                new EntityNotFoundException("no task with id: " + userId));
+
+        Comment comment = Comment.builder()
+                .text(request.getText())
+                .createdAt(LocalDateTime.now())
+                .task(task)
+                .user(user)
+                .build();
+        return comment.toDto();
     }
 }

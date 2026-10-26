@@ -1,43 +1,42 @@
 package com.taskforge.security;
 
-import com.taskforge.model.dto.JwtAuthenticationDTO;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.Base64;
 import java.util.Date;
 
-@Component
+@Service
 public class JwtService {
-    private String jwtSecret;
+    private final SecretKey key;
+    private final long expirationMs;
 
+    @Autowired
+    public JwtService(
+            @Value("${app.jwt.secret}") String secret,
+            @Value("${app.jwt.expiration-ms}") long expirationMs
+    ) {
+        this.key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret));
+        this.expirationMs = expirationMs;
+    }
 
-    private String generateJwtToken(String email) {
-        Date date = Date.from(LocalDateTime.now().plusMinutes(1).atZone(ZoneId.systemDefault()).toInstant());
+    public String generateToken(UserDetails user) {
+        Date now = new Date();
         return Jwts.builder()
-                .subject(email)
-                .expiration(date)
-                .signWith(getSignInKey())
+                .subject(user.getUsername())
+                .issuedAt(now)
+                .expiration(new Date(now.getTime() + expirationMs))
+                .signWith(key)
                 .compact();
     }
 
-    private String generateRefreshToken(String email) {
-        Date date = Date.from(LocalDateTime.now().plusDays(1).atZone(ZoneId.systemDefault()).toInstant());
-        return Jwts.builder()
-                .subject(email)
-                .expiration(date)
-                .signWith(getSignInKey())
-                .compact();
-    }
-
-    private SecretKey getSignInKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(jwtSecret);
-        return Keys.hmacShaKeyFor(keyBytes);
+    public String extractUsername(String token) {
+        return Jwts.parser().verifyWith(key).build()
+                .parseSignedClaims(token).getPayload().getSubject();
     }
 }

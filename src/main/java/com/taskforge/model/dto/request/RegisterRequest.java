@@ -1,15 +1,13 @@
-package com.taskforge.model.dto;
+package com.taskforge.model.dto.request;
 
-import com.taskforge.model.enums.UserRole;
 import lombok.Data;
 
 
 @Data
-public class RegisterRequestDTO {
+public class RegisterRequest {
     private String firstName;
     private String lastName;
     private String username;
     private String email;
     private String password;
-    private String role;
 }

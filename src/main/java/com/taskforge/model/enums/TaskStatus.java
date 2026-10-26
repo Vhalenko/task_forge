@@ -1,7 +1,7 @@
 package com.taskforge.model.enums;
 
 public enum TaskStatus {
-    OPEN,
+    TODO,
     IN_PROGRESS,
-    CLOSED;
+    DONE;
 }
