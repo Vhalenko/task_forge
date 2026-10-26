@@ -1,13 +1,10 @@
 package com.taskforge.model.dto.request;
 
-import lombok.Data;
-
-@Data
-public class CreateTaskRequest {
-    private String title;
-    private String description;
-    private String priority;
-    private String status;
-    private Long createdBy;
-    private Long assignedTo;
+public record CreateTaskRequest (
+         String title,
+         String description,
+         String priority,
+         String status,
+         Long createdBy,
+         Long assignedTo) {
 }

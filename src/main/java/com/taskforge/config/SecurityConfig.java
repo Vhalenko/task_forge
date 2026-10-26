@@ -1,6 +1,5 @@
 package com.taskforge.config;
 
-import com.taskforge.model.enums.UserRole;
 import com.taskforge.security.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

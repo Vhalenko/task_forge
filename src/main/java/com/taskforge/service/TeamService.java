@@ -3,15 +3,15 @@ package com.taskforge.service;
 import com.taskforge.model.dto.ProjectDTO;
 import com.taskforge.model.dto.TeamDTO;
 import com.taskforge.model.dto.UserDTO;
-import com.taskforge.model.dto.request.CreateProjectRequest;
-import com.taskforge.model.dto.request.CreateTeamRequest;
+import com.taskforge.model.dto.request.ProjectRequest;
+import com.taskforge.model.dto.request.TeamRequest;
 import com.taskforge.model.entity.Project;
-import com.taskforge.model.entity.Task;
 import com.taskforge.model.entity.Team;
 import com.taskforge.model.entity.User;
 import com.taskforge.repository.ProjectRepository;
 import com.taskforge.repository.TeamRepository;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,15 +19,10 @@ import java.util.Comparator;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class TeamService {
     private final TeamRepository teamRepository;
     private final ProjectRepository projectRepository;
-
-    @Autowired
-    public TeamService(TeamRepository teamRepository, ProjectRepository projectRepository) {
-        this.teamRepository = teamRepository;
-        this.projectRepository = projectRepository;
-    }
 
     public List<TeamDTO> findAll() {
         return teamRepository.findAll()
@@ -43,9 +38,9 @@ public class TeamService {
         return team.toDto();
     }
 
-    public TeamDTO save(CreateTeamRequest request) {
+    public TeamDTO save(TeamRequest request) {
         Team team = Team.builder()
-                .name(request.getName())
+                .name(request.name())
                 .build();
         return teamRepository.save(team).toDto();
     }
@@ -76,12 +71,12 @@ public class TeamService {
                 .toList();
     }
 
-    public ProjectDTO saveProject(Long id, CreateProjectRequest request) {
+    public ProjectDTO saveProject(Long id, ProjectRequest request) {
         Team team = teamRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("no team with id: " + id));
 
         Project project = Project.builder()
-                .name(request.getName())
+                .name(request.name())
                 .team(team)
                 .build();
 

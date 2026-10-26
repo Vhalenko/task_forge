@@ -2,7 +2,7 @@ package com.taskforge.service;
 
 import com.taskforge.model.dto.CommentDTO;
 import com.taskforge.model.dto.TaskDTO;
-import com.taskforge.model.dto.request.CreateCommentRequest;
+import com.taskforge.model.dto.request.CommentRequest;
 import com.taskforge.model.dto.request.UpdateTaskRequest;
 import com.taskforge.model.entity.Comment;
 import com.taskforge.model.entity.Task;
@@ -13,7 +13,7 @@ import com.taskforge.repository.TaskRepository;
 import com.taskforge.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -23,14 +23,10 @@ import java.util.Comparator;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class TaskService {
     private final TaskRepository taskRepository;
     private final UserRepository userRepository;
-    @Autowired
-    public TaskService(TaskRepository taskRepository, UserRepository userRepository) {
-        this.taskRepository = taskRepository;
-        this.userRepository = userRepository;
-    }
 
     public List<TaskDTO> findAll() {
         return this.taskRepository.findAll()
@@ -47,14 +43,14 @@ public class TaskService {
     }
 
     @Transactional
-    public TaskDTO update(Long id, UpdateTaskRequest dto) {
+    public TaskDTO update(Long id, UpdateTaskRequest request) {
         Task task = taskRepository.findById(id).orElseThrow(() ->
                         new EntityNotFoundException("no task with id: " + id));
 
-        task.setTitle(dto.getTitle());
-        task.setDescription(dto.getDescription());
-        task.setPriority(TaskPriority.valueOf(dto.getPriority()));
-        task.setStatus(TaskStatus.valueOf(dto.getStatus()));
+        task.setTitle(request.title());
+        task.setDescription(request.description());
+        task.setPriority(TaskPriority.valueOf(request.priority()));
+        task.setStatus(TaskStatus.valueOf(request.status()));
 
         return task.toDto();
     }
@@ -89,7 +85,7 @@ public class TaskService {
                 .toList();
     }
 
-    public CommentDTO saveComment(Long taskId, Long userId, CreateCommentRequest request) {
+    public CommentDTO saveComment(Long taskId, Long userId, CommentRequest request) {
         Task task = taskRepository.findById(taskId).orElseThrow(() ->
                 new EntityNotFoundException("no task with id: " + taskId));
 
@@ -97,7 +93,7 @@ public class TaskService {
                 new EntityNotFoundException("no task with id: " + userId));
 
         Comment comment = Comment.builder()
-                .text(request.getText())
+                .text(request.text())
                 .createdAt(LocalDateTime.now())
                 .task(task)
                 .user(user)

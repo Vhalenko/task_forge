@@ -1,13 +1,8 @@
 package com.taskforge.model.dto.request;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
-@Getter
-@AllArgsConstructor
-public class UpdateUserRequest {
-    private final String firstName;
-    private final String lastName;
-    private final String username;
-    private final String email;
+public record UpdateUserRequest (
+        String firstName,
+        String lastName,
+        String username,
+        String email) {
 }
