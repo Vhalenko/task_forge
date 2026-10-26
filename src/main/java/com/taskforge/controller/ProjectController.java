@@ -5,12 +5,13 @@ import com.taskforge.model.dto.TaskDTO;
 import com.taskforge.model.dto.UserDTO;
 import com.taskforge.model.dto.request.CreateTaskRequest;
 import com.taskforge.model.dto.request.ProjectRequest;
-import com.taskforge.security.CustomUserDetails;
+import com.taskforge.security.CurrentUserId;
 import com.taskforge.service.ProjectService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -46,21 +47,23 @@ public class ProjectController {
     @PostMapping("/{id}/tasks")
     public ResponseEntity<TaskDTO> saveTask(
             @PathVariable Long id,
-            @AuthenticationPrincipal CustomUserDetails principal,
+            @CurrentUserId Long callerId,
             @RequestBody CreateTaskRequest request) {
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(projectService.saveTask(id, principal.getUser().getId(), request));
+                .body(projectService.saveTask(id, callerId, request));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ProjectDTO> update(@PathVariable Long id, @RequestBody ProjectRequest request) {
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ProjectDTO> update(@PathVariable Long id, @Valid @RequestBody ProjectRequest request) {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(projectService.update(id, request));
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         projectService.delete(id);
         return ResponseEntity.noContent().build();

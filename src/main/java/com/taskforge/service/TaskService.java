@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.security.access.AccessDeniedException;
 
 import java.time.LocalDateTime;
 import java.util.Comparator;
@@ -43,9 +44,16 @@ public class TaskService {
     }
 
     @Transactional
-    public TaskDTO update(Long id, UpdateTaskRequest request) {
+    public TaskDTO update(Long id, UpdateTaskRequest request, Long callerId) {
+        User caller = userRepository.findById(callerId).orElseThrow(() ->
+                new EntityNotFoundException("no task found with id: " + callerId));
+
         Task task = taskRepository.findById(id).orElseThrow(() ->
                         new EntityNotFoundException("no task with id: " + id));
+
+        if (!task.getCreatedBy().equals(caller)) {
+            throw new AccessDeniedException("you cannot delete task of other users");
+        }
 
         task.setTitle(request.title());
         task.setDescription(request.description());
@@ -55,9 +63,16 @@ public class TaskService {
         return task.toDto();
     }
 
-    public void delete(Long id) {
-        taskRepository.findById(id).orElseThrow(() ->
+    public void delete(Long id, Long callerId) {
+        User caller = userRepository.findById(callerId).orElseThrow(() ->
+                new EntityNotFoundException("no task found with id: " + callerId));
+
+        Task task = taskRepository.findById(id).orElseThrow(() ->
                 new EntityNotFoundException("no task found with id: " + id));
+
+        if (!task.getCreatedBy().equals(caller)) {
+            throw new AccessDeniedException("you cannot delete task of other users");
+        }
 
         taskRepository.deleteById(id);
     }

@@ -1,5 +1,7 @@
 package com.taskforge.model.dto.request;
 
+import jakarta.validation.constraints.NotBlank;
+
 public record ProjectRequest (
-        String name) {
+        @NotBlank String name) {
 }

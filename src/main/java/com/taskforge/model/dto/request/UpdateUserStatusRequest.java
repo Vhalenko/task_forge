@@ -1,5 +1,7 @@
 package com.taskforge.model.dto.request;
 
+import jakarta.validation.constraints.NotNull;
+
 public record UpdateUserStatusRequest (
-        boolean isBlocked) {
+        @NotNull boolean isBlocked) {
 }

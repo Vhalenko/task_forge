@@ -4,12 +4,12 @@ import com.taskforge.model.dto.CommentDTO;
 import com.taskforge.model.dto.TaskDTO;
 import com.taskforge.model.dto.request.CommentRequest;
 import com.taskforge.model.dto.request.UpdateTaskRequest;
-import com.taskforge.security.CustomUserDetails;
+import com.taskforge.security.CurrentUserId;
 import com.taskforge.service.TaskService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -36,10 +36,12 @@ public class TaskController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<TaskDTO> update(@PathVariable Long id, @RequestBody UpdateTaskRequest request) {
+    public ResponseEntity<TaskDTO> update(@PathVariable Long id,
+                                          @Valid @RequestBody UpdateTaskRequest request,
+                                          @CurrentUserId Long callerId) {
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(taskService.update(id, request));
+                .body(taskService.update(id, request, callerId));
     }
 
     @PatchMapping("/{taskId}/assignee/{userId}")
@@ -51,8 +53,8 @@ public class TaskController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
-        taskService.delete(id);
+    public ResponseEntity<Void> delete(@PathVariable Long id, @CurrentUserId Long callerId) {
+        taskService.delete(id, callerId);
         return ResponseEntity.noContent().build();
     }
 
@@ -66,10 +68,10 @@ public class TaskController {
     @PostMapping("/{id}/comments")
     public ResponseEntity<CommentDTO> saveComment(
             @PathVariable Long id,
-            @AuthenticationPrincipal CustomUserDetails principal,
-            @RequestBody CommentRequest request) {
+            @CurrentUserId Long callerId,
+            @Valid @RequestBody CommentRequest request) {
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(taskService.saveComment(id, principal.getUser().getId(), request));
+                .body(taskService.saveComment(id, callerId, request));
     }
 }

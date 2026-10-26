@@ -5,12 +5,13 @@ import com.taskforge.model.dto.UserDTO;
 import com.taskforge.model.dto.request.UpdateRoleRequest;
 import com.taskforge.model.dto.request.UpdateUserRequest;
 import com.taskforge.model.dto.request.UpdateUserStatusRequest;
-import com.taskforge.security.CustomUserDetails;
+import com.taskforge.security.CurrentUserId;
 import com.taskforge.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,32 +31,35 @@ public class UserController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<UserDTO> findMe(@AuthenticationPrincipal CustomUserDetails principal) {
+    public ResponseEntity<UserDTO> findMe(@CurrentUserId Long callerId) {
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(userService.findById(principal.getUser().getId()));
+                .body(userService.findById(callerId));
     }
 
     @GetMapping("/me/tasks")
-    public ResponseEntity<List<TaskDTO>> findMyTasks(@AuthenticationPrincipal CustomUserDetails principal) {
+    public ResponseEntity<List<TaskDTO>> findMyTasks(@CurrentUserId Long callerId) {
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(userService.findTasks(principal.getUser().getId()));
+                .body(userService.findTasks(callerId));
     }
 
     @PatchMapping("/{id}/role")
-    public ResponseEntity<Void> updateRole(@PathVariable Long id, @RequestBody UpdateRoleRequest request) {
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> updateRole(@PathVariable Long id, @Valid @RequestBody UpdateRoleRequest request) {
         userService.updateRole(id, request);
         return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/{id}/blocked")
-    public ResponseEntity<Void> updateStatus(@PathVariable Long id, @RequestBody UpdateUserStatusRequest request) {
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> updateStatus(@PathVariable Long id, @Valid @RequestBody UpdateUserStatusRequest request) {
         userService.updateStatus(id, request);
         return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/{userId}/teams/{teamId}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> updateTeam(@PathVariable(name = "userId") Long userId,
                                            @PathVariable(name = "teamId") Long teamId) {
         userService.updateTeam(userId, teamId);
@@ -63,9 +67,11 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UserDTO> update(@PathVariable Long id, @RequestBody UpdateUserRequest request) {
+    public ResponseEntity<UserDTO> update(@PathVariable Long id,
+                                          @Valid @RequestBody UpdateUserRequest request,
+                                          @CurrentUserId Long callerId) {
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(userService.update(id, request));
+                .body(userService.update(id, request, callerId));
     }
 }

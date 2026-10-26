@@ -9,6 +9,7 @@ import com.taskforge.model.entity.Project;
 import com.taskforge.model.entity.Task;
 import com.taskforge.model.entity.User;
 import com.taskforge.model.enums.TaskPriority;
+import com.taskforge.model.enums.TaskStatus;
 import com.taskforge.repository.ProjectRepository;
 import com.taskforge.repository.TaskRepository;
 import com.taskforge.repository.UserRepository;
@@ -78,6 +79,7 @@ public class ProjectService {
         Task task = Task.builder()
                 .title(request.title())
                 .description(request.description())
+                .status(TaskStatus.TODO)
                 .priority(TaskPriority.valueOf(request.priority()))
                 .project(project)
                 .createdBy(user)

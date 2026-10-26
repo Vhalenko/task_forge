@@ -1,8 +1,10 @@
 package com.taskforge.model.dto.request;
 
+import jakarta.validation.constraints.NotBlank;
+
 public record UpdateUserRequest (
-        String firstName,
-        String lastName,
-        String username,
-        String email) {
+        @NotBlank String firstName,
+        @NotBlank String lastName,
+        @NotBlank String username,
+        @NotBlank String email) {
 }

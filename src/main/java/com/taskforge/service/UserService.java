@@ -15,6 +15,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.security.access.AccessDeniedException;
 
 import java.util.Comparator;
 import java.util.List;
@@ -58,9 +59,16 @@ public class UserService {
         user.setBlocked(request.isBlocked());
     }
 
-    public UserDTO update(Long id, UpdateUserRequest request) {
+    public UserDTO update(Long id, UpdateUserRequest request, Long callerId) {
+        User caller = userRepository.findById(callerId).orElseThrow(() ->
+                new EntityNotFoundException("no users with id: " + callerId));
+
         User user = userRepository.findById(id).orElseThrow(() ->
                 new EntityNotFoundException("no users with id: " + id));
+
+        if (!user.equals(caller)) {
+            throw new AccessDeniedException("you cannot edit other users");
+        }
 
         user.setFirstName(request.firstName());
         user.setLastName(request.lastName());

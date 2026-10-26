@@ -6,6 +6,7 @@ import com.taskforge.model.dto.UserDTO;
 import com.taskforge.model.dto.request.ProjectRequest;
 import com.taskforge.model.dto.request.TeamRequest;
 import com.taskforge.service.TeamService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -45,6 +46,7 @@ public class TeamController {
     }
 
     @GetMapping("/{id}/users")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<UserDTO>> findUsers(@PathVariable Long id) {
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -59,13 +61,15 @@ public class TeamController {
     }
 
     @PostMapping("/{id}/projects")
-    public ResponseEntity<ProjectDTO> saveProject(@PathVariable Long id, @RequestBody ProjectRequest request) {
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ProjectDTO> saveProject(@PathVariable Long id, @Valid @RequestBody ProjectRequest request) {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(teamService.saveProject(id, request));
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         teamService.delete(id);
         return ResponseEntity.noContent().build();
