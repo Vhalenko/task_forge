@@ -70,8 +70,8 @@ public class Task {
                 id,
                 title,
                 description,
-                priority,
-                status,
+                priority.name(),
+                status.name(),
                 dueDate,
                 createdAt,
                 completedAt

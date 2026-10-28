@@ -76,6 +76,6 @@ public class User {
                 lastName,
                 username,
                 email,
-                role);
+                role.name());
     }
 }
