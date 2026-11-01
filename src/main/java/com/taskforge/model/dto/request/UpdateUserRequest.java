@@ -1,13 +1,10 @@
 package com.taskforge.model.dto.request;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import jakarta.validation.constraints.NotBlank;
 
-@Getter
-@AllArgsConstructor
-public class UpdateUserRequest {
-    private final String firstName;
-    private final String lastName;
-    private final String username;
-    private final String email;
+public record UpdateUserRequest (
+        @NotBlank String firstName,
+        @NotBlank String lastName,
+        @NotBlank String username,
+        @NotBlank String email) {
 }

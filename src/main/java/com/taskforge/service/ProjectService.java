@@ -4,16 +4,17 @@ import com.taskforge.model.dto.ProjectDTO;
 import com.taskforge.model.dto.TaskDTO;
 import com.taskforge.model.dto.UserDTO;
 import com.taskforge.model.dto.request.CreateTaskRequest;
-import com.taskforge.model.dto.request.UpdateProjectRequest;
+import com.taskforge.model.dto.request.ProjectRequest;
 import com.taskforge.model.entity.Project;
 import com.taskforge.model.entity.Task;
 import com.taskforge.model.entity.User;
 import com.taskforge.model.enums.TaskPriority;
+import com.taskforge.model.enums.TaskStatus;
 import com.taskforge.repository.ProjectRepository;
 import com.taskforge.repository.TaskRepository;
 import com.taskforge.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -21,17 +22,12 @@ import java.util.Comparator;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class ProjectService {
     private final ProjectRepository projectRepository;
     private final UserRepository userRepository;
     private final TaskRepository taskRepository;
 
-    @Autowired
-    public ProjectService(ProjectRepository projectRepository, UserRepository userRepository, TaskRepository taskRepository) {
-        this.projectRepository = projectRepository;
-        this.userRepository = userRepository;
-        this.taskRepository = taskRepository;
-    }
     public ProjectDTO findById(Long id) {
         Project project = projectRepository.findById(id).orElseThrow(() ->
                 new EntityNotFoundException("no project with id: " + id));
@@ -61,11 +57,11 @@ public class ProjectService {
                 .toList();
     }
 
-    public ProjectDTO update(Long id, UpdateProjectRequest request) {
+    public ProjectDTO update(Long id, ProjectRequest request) {
         Project project = projectRepository.findById(id).orElseThrow(() ->
                 new EntityNotFoundException("no project with id: " + id));
 
-        project.setName(request.getName());
+        project.setName(request.name());
         return projectRepository.save(project).toDto();
     }
 
@@ -73,17 +69,18 @@ public class ProjectService {
         projectRepository.deleteById(id);
     }
 
-    public TaskDTO saveTask(Long projectId, Long userId, CreateTaskRequest request) {
+    public TaskDTO saveTask(Long projectId, Long callerId, CreateTaskRequest request) {
         Project project = projectRepository.findById(projectId).orElseThrow(() ->
                 new EntityNotFoundException("no project with id: " + projectId));
 
-        User user = userRepository.findById(userId).orElseThrow(() ->
-                new EntityNotFoundException("no project with id: " + userId));
+        User user = userRepository.findById(callerId).orElseThrow(() ->
+                new EntityNotFoundException("no project with id: " + callerId));
 
         Task task = Task.builder()
-                .title(request.getTitle())
-                .description(request.getDescription())
-                .priority(TaskPriority.valueOf(request.getPriority()))
+                .title(request.title())
+                .description(request.description())
+                .status(TaskStatus.TODO)
+                .priority(request.priority())
                 .project(project)
                 .createdBy(user)
                 .createdAt(LocalDateTime.now())

@@ -1,10 +1,8 @@
 package com.taskforge.model.dto.request;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import com.taskforge.model.enums.UserRole;
+import jakarta.validation.constraints.NotNull;
 
-@Getter
-@AllArgsConstructor
-public class UpdateRoleRequest {
-    private final String Role;
+public record UpdateRoleRequest (
+        @NotNull UserRole role) {
 }

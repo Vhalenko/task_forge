@@ -76,6 +76,9 @@ public class User {
                 lastName,
                 username,
                 email,
-                role);
+                role.name(),
+                team != null ? team.getId() : null,
+                team != null ? team.getName() : null,
+                isBlocked);
     }
 }

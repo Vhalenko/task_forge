@@ -1,10 +1,7 @@
 package com.taskforge.model.dto.request;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import jakarta.validation.constraints.NotNull;
 
-@Getter
-@AllArgsConstructor
-public class UpdateUserStatusRequest {
-    private final boolean isBlocked;
+public record UpdateUserStatusRequest (
+        @NotNull Boolean isBlocked) {
 }

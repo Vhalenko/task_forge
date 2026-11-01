@@ -1,13 +1,15 @@
 package com.taskforge.model.dto.request;
 
-import lombok.Data;
+import com.taskforge.model.enums.TaskPriority;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
-@Data
-public class CreateTaskRequest {
-    private String title;
-    private String description;
-    private String priority;
-    private String status;
-    private Long createdBy;
-    private Long assignedTo;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+public record CreateTaskRequest (
+        @NotBlank String title,
+        String description,
+        @NotNull TaskPriority priority,
+        LocalDateTime dueDate) {
 }

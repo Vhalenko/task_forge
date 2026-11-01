@@ -1,13 +1,11 @@
 package com.taskforge.model.dto.request;
 
-import lombok.Data;
+import jakarta.validation.constraints.NotBlank;
 
-
-@Data
-public class RegisterRequest {
-    private String firstName;
-    private String lastName;
-    private String username;
-    private String email;
-    private String password;
+public record RegisterRequest (
+        @NotBlank String firstName,
+        @NotBlank String lastName,
+        @NotBlank String username,
+        @NotBlank String email,
+        @NotBlank String password) {
 }

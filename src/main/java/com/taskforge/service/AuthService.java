@@ -10,7 +10,7 @@ import com.taskforge.repository.UserRepository;
 import com.taskforge.security.CustomUserDetails;
 import com.taskforge.security.JwtService;
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.LockedException;
@@ -19,44 +19,36 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 @Service
+@RequiredArgsConstructor
 public class AuthService {
     private final UserRepository userRepository;
     private final JwtService jwtService;
     private final BCryptPasswordEncoder passwordEncoder;
 
-    @Autowired
-    public AuthService(UserRepository userRepository,
-                       BCryptPasswordEncoder passwordEncoder,
-                       JwtService jwtService) {
-        this.userRepository = userRepository;
-        this.jwtService = jwtService;
-        this.passwordEncoder = passwordEncoder;
-    }
-
-    public UserDTO register(RegisterRequest dto) {
-        String email = dto.getEmail().toLowerCase();
+    public UserDTO register(RegisterRequest request) {
+        String email = request.email().toLowerCase();
         if (userRepository.existsByEmailIgnoreCase(email)) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Email is in use");
         }
 
         User user = User.builder()
-                .firstName(dto.getFirstName())
-                .lastName(dto.getLastName())
+                .firstName(request.firstName())
+                .lastName(request.lastName())
                 .email(email)
-                .username(dto.getUsername())
-                .passwordHash(passwordEncoder.encode(dto.getPassword()))
+                .username(request.username())
+                .passwordHash(passwordEncoder.encode(request.password()))
                 .role(UserRole.USER)
                 .build();
 
         return userRepository.save(user).toDto();
     }
 
-    public AuthDTO login(LoginRequest dto) {
-        User user = userRepository.findByEmailIgnoreCase(dto.getEmail())
-                .orElseThrow(() -> new BadCredentialsException("incorrect email or password"));
+    public AuthDTO login(LoginRequest request) {
+        User user = userRepository.findByEmailIgnoreCase(request.email())
+                .orElseThrow(() -> new EntityNotFoundException("IIIncorrect email or password"));
 
-        if (!passwordEncoder.matches(dto.getPassword(), user.getPasswordHash())) {
-            throw new EntityNotFoundException("incorrect password or email");
+        if (!passwordEncoder.matches(request.password(), user.getPasswordHash())) {
+            throw new BadCredentialsException("incorrect password or email");
         }
 
         if (user.isBlocked()) {
