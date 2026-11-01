@@ -71,7 +71,7 @@ public class TaskController {
             @CurrentUserId Long callerId,
             @Valid @RequestBody CommentRequest request) {
         return ResponseEntity
-                .status(HttpStatus.OK)
+                .status(HttpStatus.CREATED)
                 .body(taskService.saveComment(id, callerId, request));
     }
 }

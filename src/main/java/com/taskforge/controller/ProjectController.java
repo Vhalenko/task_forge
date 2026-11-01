@@ -48,9 +48,9 @@ public class ProjectController {
     public ResponseEntity<TaskDTO> saveTask(
             @PathVariable Long id,
             @CurrentUserId Long callerId,
-            @RequestBody CreateTaskRequest request) {
+            @Valid @RequestBody CreateTaskRequest request) {
         return ResponseEntity
-                .status(HttpStatus.OK)
+                .status(HttpStatus.CREATED)
                 .body(projectService.saveTask(id, callerId, request));
     }
 

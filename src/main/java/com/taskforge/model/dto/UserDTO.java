@@ -6,5 +6,8 @@ public record UserDTO(
         String lastName,
         String username,
         String email,
-        String role) {
+        String role,
+        Long teamId,
+        String teamName,
+        boolean isBlocked) {
 }

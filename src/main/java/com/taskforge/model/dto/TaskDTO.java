@@ -1,6 +1,7 @@
 package com.taskforge.model.dto;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 
 public record TaskDTO(
@@ -11,5 +12,9 @@ public record TaskDTO(
         String status,
         LocalDateTime dueDate,
         LocalDateTime createdAt,
-        LocalDateTime completedAt) {
+        LocalDateTime completedAt,
+        Long createdBy,
+        List<UserDTO> assignees,
+        Long projectId,
+        String projectName) {
 }

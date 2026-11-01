@@ -69,18 +69,18 @@ public class ProjectService {
         projectRepository.deleteById(id);
     }
 
-    public TaskDTO saveTask(Long projectId, Long userId, CreateTaskRequest request) {
+    public TaskDTO saveTask(Long projectId, Long callerId, CreateTaskRequest request) {
         Project project = projectRepository.findById(projectId).orElseThrow(() ->
                 new EntityNotFoundException("no project with id: " + projectId));
 
-        User user = userRepository.findById(userId).orElseThrow(() ->
-                new EntityNotFoundException("no project with id: " + userId));
+        User user = userRepository.findById(callerId).orElseThrow(() ->
+                new EntityNotFoundException("no project with id: " + callerId));
 
         Task task = Task.builder()
                 .title(request.title())
                 .description(request.description())
                 .status(TaskStatus.TODO)
-                .priority(TaskPriority.valueOf(request.priority()))
+                .priority(request.priority())
                 .project(project)
                 .createdBy(user)
                 .createdAt(LocalDateTime.now())

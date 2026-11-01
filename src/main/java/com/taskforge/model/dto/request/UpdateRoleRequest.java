@@ -1,7 +1,8 @@
 package com.taskforge.model.dto.request;
 
-import jakarta.validation.constraints.NotBlank;
+import com.taskforge.model.enums.UserRole;
+import jakarta.validation.constraints.NotNull;
 
 public record UpdateRoleRequest (
-        @NotBlank String role) {
+        @NotNull UserRole role) {
 }

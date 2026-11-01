@@ -48,7 +48,7 @@ public class UserService {
         User user = userRepository.findById(id).orElseThrow(() ->
                 new EntityNotFoundException("no users with id: " + id));
 
-        user.setRole(UserRole.valueOf(request.role()));
+        user.setRole(request.role());
     }
 
     @Transactional

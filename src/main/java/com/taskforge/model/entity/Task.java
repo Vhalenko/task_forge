@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -63,7 +64,8 @@ public class Task {
             joinColumns = @JoinColumn(name = "task_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
-    private Set<User> assignees;
+    @Builder.Default
+    private Set<User> assignees = new HashSet<>();
 
     public TaskDTO toDto() {
         return new TaskDTO(
@@ -74,7 +76,11 @@ public class Task {
                 status.name(),
                 dueDate,
                 createdAt,
-                completedAt
+                completedAt,
+                createdBy.getId(),
+                assignees.stream().map(User::toDto).toList(),
+                project.getId(),
+                project.getName()
         );
     }
 }

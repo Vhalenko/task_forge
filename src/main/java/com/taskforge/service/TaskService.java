@@ -9,6 +9,7 @@ import com.taskforge.model.entity.Task;
 import com.taskforge.model.entity.User;
 import com.taskforge.model.enums.TaskPriority;
 import com.taskforge.model.enums.TaskStatus;
+import com.taskforge.repository.CommentRepository;
 import com.taskforge.repository.TaskRepository;
 import com.taskforge.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -28,6 +29,7 @@ import java.util.List;
 public class TaskService {
     private final TaskRepository taskRepository;
     private final UserRepository userRepository;
+    private final CommentRepository commentRepository;
 
     public List<TaskDTO> findAll() {
         return this.taskRepository.findAll()
@@ -57,8 +59,8 @@ public class TaskService {
 
         task.setTitle(request.title());
         task.setDescription(request.description());
-        task.setPriority(TaskPriority.valueOf(request.priority()));
-        task.setStatus(TaskStatus.valueOf(request.status()));
+        task.setPriority(request.priority());
+        task.setStatus(request.status());
 
         return task.toDto();
     }
@@ -113,6 +115,6 @@ public class TaskService {
                 .task(task)
                 .user(user)
                 .build();
-        return comment.toDto();
+        return  commentRepository.save(comment).toDto();
     }
 }

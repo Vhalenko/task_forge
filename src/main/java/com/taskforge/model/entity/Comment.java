@@ -37,7 +37,9 @@ public class Comment {
         return new CommentDTO(
                 id,
                 text,
-                createdAt
+                createdAt,
+                user.getId(),
+                user.getUsername()
         );
     }
 }

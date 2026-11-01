@@ -39,7 +39,7 @@ public class TeamController {
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<TeamDTO> save(@RequestBody TeamRequest request) {
+    public ResponseEntity<TeamDTO> save(@Valid @RequestBody TeamRequest request) {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(teamService.save(request));

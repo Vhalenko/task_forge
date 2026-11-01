@@ -45,7 +45,7 @@ public class AuthService {
 
     public AuthDTO login(LoginRequest request) {
         User user = userRepository.findByEmailIgnoreCase(request.email())
-                .orElseThrow(() -> new EntityNotFoundException("incorrect email or password"));
+                .orElseThrow(() -> new EntityNotFoundException("IIIncorrect email or password"));
 
         if (!passwordEncoder.matches(request.password(), user.getPasswordHash())) {
             throw new BadCredentialsException("incorrect password or email");

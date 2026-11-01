@@ -5,5 +5,7 @@ import java.time.LocalDateTime;
 public record CommentDTO(
         Long id,
         String text,
-        LocalDateTime createdAt) {
+        LocalDateTime createdAt,
+        Long createdById,
+        String createdByName) {
 }
