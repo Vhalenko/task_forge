@@ -80,7 +80,7 @@ public class TaskService {
     }
 
     @Transactional
-    public void updateAssignee(Long taskId, Long userId) {
+    public void assign(Long taskId, Long userId) {
         Task task = taskRepository.findById(taskId).orElseThrow(() ->
                 new EntityNotFoundException("no task found with id: " + taskId));
         User user = userRepository.findById(userId).orElseThrow(() ->

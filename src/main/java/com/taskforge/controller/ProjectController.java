@@ -30,12 +30,12 @@ public class ProjectController {
                 .body(projectService.findById(id));
     }
 
-    @GetMapping("/{id}/users")
-    public ResponseEntity<List<UserDTO>> findUsers(@PathVariable Long id) {
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(projectService.findUsers(id));
-    }
+//    @GetMapping("/{id}/users")
+//    public ResponseEntity<List<UserDTO>> findUsers(@PathVariable Long id) {
+//        return ResponseEntity
+//                .status(HttpStatus.OK)
+//                .body(projectService.findUsers(id));
+//    }
 
     @GetMapping("/{id}/tasks")
     public ResponseEntity<List<TaskDTO>> findTasks(@PathVariable Long id) {

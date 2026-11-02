@@ -21,13 +21,6 @@ public class TaskController {
 
     private final TaskService taskService;
 
-    @GetMapping
-    public ResponseEntity<List<TaskDTO>> getAllTasks() {
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(taskService.findAll());
-    }
-
     @GetMapping("/{id}")
     public ResponseEntity<TaskDTO> findById(@PathVariable Long id) {
         return ResponseEntity
@@ -45,10 +38,18 @@ public class TaskController {
     }
 
     @PatchMapping("/{taskId}/assignee/{userId}")
-    public ResponseEntity<Void> updateAssignee(
+    public ResponseEntity<Void> assign(
             @PathVariable(name = "taskId") Long taskId,
             @PathVariable(name = "userId")Long userId) {
-        taskService.updateAssignee(taskId, userId);
+        taskService.assign(taskId, userId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{taskId}/assignee/me")
+    public ResponseEntity<Void> assignMe(
+            @PathVariable(name = "taskId") Long taskId,
+            @CurrentUserId Long callerId) {
+        taskService.assign(taskId, callerId);
         return ResponseEntity.noContent().build();
     }
 

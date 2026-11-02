@@ -36,7 +36,6 @@ public class TeamController {
                 .body(teamService.findById(id));
     }
 
-
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<TeamDTO> save(@Valid @RequestBody TeamRequest request) {

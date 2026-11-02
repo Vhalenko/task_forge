@@ -58,20 +58,19 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
-    @PatchMapping("/{userId}/teams/{teamId}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Void> updateTeam(@PathVariable(name = "userId") Long userId,
-                                           @PathVariable(name = "teamId") Long teamId) {
-        userService.updateTeam(userId, teamId);
-        return ResponseEntity.noContent().build();
-    }
+//    @PatchMapping("/{userId}/teams/{teamId}")
+//    @PreAuthorize("hasRole('ADMIN')")
+//    public ResponseEntity<Void> updateTeam(@PathVariable(name = "userId") Long userId,
+//                                           @PathVariable(name = "teamId") Long teamId) {
+//        userService.updateTeam(userId, teamId);
+//        return ResponseEntity.noContent().build();
+//    }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<UserDTO> update(@PathVariable Long id,
-                                          @Valid @RequestBody UpdateUserRequest request,
+    @PutMapping("/me")
+    public ResponseEntity<UserDTO> update(@Valid @RequestBody UpdateUserRequest request,
                                           @CurrentUserId Long callerId) {
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(userService.update(id, request, callerId));
+                .body(userService.update(request, callerId));
     }
 }

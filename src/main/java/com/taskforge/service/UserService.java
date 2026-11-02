@@ -59,23 +59,16 @@ public class UserService {
         user.setBlocked(request.isBlocked());
     }
 
-    public UserDTO update(Long id, UpdateUserRequest request, Long callerId) {
+    public UserDTO update(UpdateUserRequest request, Long callerId) {
         User caller = userRepository.findById(callerId).orElseThrow(() ->
                 new EntityNotFoundException("no users with id: " + callerId));
 
-        User user = userRepository.findById(id).orElseThrow(() ->
-                new EntityNotFoundException("no users with id: " + id));
+        caller.setFirstName(request.firstName());
+        caller.setLastName(request.lastName());
+        caller.setUsername(request.username());
+        caller.setEmail(request.email());
 
-        if (!user.equals(caller)) {
-            throw new AccessDeniedException("you cannot edit other users");
-        }
-
-        user.setFirstName(request.firstName());
-        user.setLastName(request.lastName());
-        user.setUsername(request.username());
-        user.setEmail(request.email());
-
-        return userRepository.save(user).toDto();
+        return userRepository.save(caller).toDto();
     }
 
     @Transactional
