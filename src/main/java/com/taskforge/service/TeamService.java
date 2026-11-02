@@ -5,17 +5,13 @@ import com.taskforge.model.dto.TeamDTO;
 import com.taskforge.model.dto.UserDTO;
 import com.taskforge.model.dto.request.ProjectRequest;
 import com.taskforge.model.dto.request.TeamRequest;
-import com.taskforge.model.entity.Comment;
 import com.taskforge.model.entity.Project;
 import com.taskforge.model.entity.Team;
 import com.taskforge.model.entity.User;
 import com.taskforge.repository.ProjectRepository;
 import com.taskforge.repository.TeamRepository;
-import com.taskforge.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
@@ -26,7 +22,6 @@ import java.util.List;
 public class TeamService {
     private final TeamRepository teamRepository;
     private final ProjectRepository projectRepository;
-    private final UserRepository userRepository;
 
     public List<TeamDTO> findAll() {
         return teamRepository.findAll()

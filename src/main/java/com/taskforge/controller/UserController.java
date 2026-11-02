@@ -74,4 +74,12 @@ public class UserController {
                 .status(HttpStatus.OK)
                 .body(userService.update(id, request, callerId));
     }
+
+    @PutMapping("/me")
+    public ResponseEntity<UserDTO> updateMe(@Valid @RequestBody UpdateUserRequest request,
+                                          @CurrentUserId Long callerId) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(userService.updateMe(request, callerId));
+    }
 }

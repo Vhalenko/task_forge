@@ -40,6 +40,10 @@ public class AuthService {
                 .role(UserRole.USER)
                 .build();
 
+        if (request.username().isBlank()) {
+            user.setUsername(request.firstName() + " " + request.lastName());
+        }
+
         return userRepository.save(user).toDto();
     }
 

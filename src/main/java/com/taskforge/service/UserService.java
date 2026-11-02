@@ -13,6 +13,7 @@ import com.taskforge.repository.TeamRepository;
 import com.taskforge.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.security.access.AccessDeniedException;
@@ -87,5 +88,17 @@ public class UserService {
                 new EntityNotFoundException("no users with id: " + teamId));
 
         user.setTeam(team);
+    }
+
+    public UserDTO updateMe(@Valid UpdateUserRequest request, Long callerId) {
+        User caller = userRepository.findById(callerId).orElseThrow(() ->
+                new EntityNotFoundException("no users with id: " + callerId));
+
+        caller.setFirstName(request.firstName());
+        caller.setLastName(request.lastName());
+        caller.setUsername(request.username());
+        caller.setEmail(request.email());
+
+        return userRepository.save(caller).toDto();
     }
 }
