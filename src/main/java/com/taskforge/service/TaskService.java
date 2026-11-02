@@ -61,6 +61,11 @@ public class TaskService {
         task.setDescription(request.description());
         task.setPriority(request.priority());
         task.setStatus(request.status());
+        task.setDueDate(request.dueDate());
+
+        if (request.status().equals(TaskStatus.DONE)) {
+            task.setCompletedAt(LocalDateTime.now());
+        }
 
         return task.toDto();
     }

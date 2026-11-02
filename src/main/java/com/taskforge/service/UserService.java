@@ -65,8 +65,11 @@ public class UserService {
 
         caller.setFirstName(request.firstName());
         caller.setLastName(request.lastName());
-        caller.setUsername(request.username());
         caller.setEmail(request.email());
+
+        if (!request.username().isBlank()) {
+            caller.setUsername(request.username());
+        }
 
         return userRepository.save(caller).toDto();
     }

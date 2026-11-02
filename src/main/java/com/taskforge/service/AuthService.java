@@ -35,10 +35,13 @@ public class AuthService {
                 .firstName(request.firstName())
                 .lastName(request.lastName())
                 .email(email)
-                .username(request.username())
                 .passwordHash(passwordEncoder.encode(request.password()))
                 .role(UserRole.USER)
                 .build();
+
+        if (request.username().isBlank()) {
+            user.setUsername(request.firstName() + " " + request.lastName());
+        }
 
         return userRepository.save(user).toDto();
     }

@@ -10,6 +10,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -38,6 +39,7 @@ public class TaskController {
     }
 
     @PatchMapping("/{taskId}/assignee/{userId}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> assign(
             @PathVariable(name = "taskId") Long taskId,
             @PathVariable(name = "userId")Long userId) {

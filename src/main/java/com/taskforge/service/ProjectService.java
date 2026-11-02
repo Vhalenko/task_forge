@@ -84,6 +84,7 @@ public class ProjectService {
                 .project(project)
                 .createdBy(user)
                 .createdAt(LocalDateTime.now())
+                .dueDate(request.dueDate())
                 .build();
 
         return taskRepository.save(task).toDto();
