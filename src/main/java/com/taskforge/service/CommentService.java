@@ -20,13 +20,13 @@ public class CommentService {
 
     public void delete(Long id, Long callerId) {
         User caller = userRepository.findById(callerId).orElseThrow(() ->
-                new EntityNotFoundException("no user with id: " + callerId));
+                new EntityNotFoundException("User not found"));
 
         Comment comment = commentRepository.findById(id).orElseThrow(() ->
-                new EntityNotFoundException("no comment with id: " + id));
+                new EntityNotFoundException("Comment not found"));
 
         if (!comment.getUser().equals(caller)) {
-            throw new AccessDeniedException("you cannot delete comments of other users");
+            throw new AccessDeniedException("You do not have permission to perform this action");
         }
 
         commentRepository.deleteById(id);
@@ -34,13 +34,13 @@ public class CommentService {
 
     public CommentDTO update(Long id, CommentRequest request, Long callerId) {
         User caller = userRepository.findById(callerId).orElseThrow(() ->
-                new EntityNotFoundException("no user with id: " + callerId));
+                new EntityNotFoundException("User not found"));
 
         Comment comment = commentRepository.findById(id).orElseThrow(() ->
-                new EntityNotFoundException("no comment with id: " + id));
+                new EntityNotFoundException("Comment not found"));
 
         if (!comment.getUser().equals(caller)) {
-            throw new AccessDeniedException("you cannot delete comments of other users");
+            throw new AccessDeniedException("You do not have permission to perform this action");
         }
 
         comment.setText(request.text());

@@ -40,8 +40,20 @@ public class SecurityConfig {
                 .authorizeHttpRequests(a -> a
                         .requestMatchers("/api/v1/auth/register", "/api/v1/auth/login").permitAll()
                         .anyRequest().authenticated())
-                .exceptionHandling(e -> e
-                        .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint((request, response, ex) -> {
+                            response.sendError(
+                                    HttpStatus.UNAUTHORIZED.value(),
+                                    "Authentication required"
+                            );
+                        })
+                        .accessDeniedHandler((request, response, ex) -> {
+                            response.sendError(
+                                    HttpStatus.FORBIDDEN.value(),
+                                    "Access denied"
+                            );
+                        })
+                )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }

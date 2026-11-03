@@ -8,7 +8,6 @@ import com.taskforge.model.dto.request.ProjectRequest;
 import com.taskforge.model.entity.Project;
 import com.taskforge.model.entity.Task;
 import com.taskforge.model.entity.User;
-import com.taskforge.model.enums.TaskPriority;
 import com.taskforge.model.enums.TaskStatus;
 import com.taskforge.repository.ProjectRepository;
 import com.taskforge.repository.TaskRepository;
@@ -30,14 +29,14 @@ public class ProjectService {
 
     public ProjectDTO findById(Long id) {
         Project project = projectRepository.findById(id).orElseThrow(() ->
-                new EntityNotFoundException("no project with id: " + id));
+                new EntityNotFoundException("Project not found"));
 
         return project.toDto();
     }
 
     public List<UserDTO> findUsers(Long id) {
         Project project = projectRepository.findById(id).orElseThrow(() ->
-                new EntityNotFoundException("no project with id: " + id));
+                new EntityNotFoundException("Project not found"));
 
         return project.getUsers()
                 .stream()
@@ -48,7 +47,7 @@ public class ProjectService {
 
     public List<TaskDTO> findTasks(Long id) {
         Project project = projectRepository.findById(id).orElseThrow(() ->
-                new EntityNotFoundException("no project with id: " + id));
+                new EntityNotFoundException("Project not found"));
 
         return project.getTasks()
                 .stream()
@@ -59,7 +58,7 @@ public class ProjectService {
 
     public ProjectDTO update(Long id, ProjectRequest request) {
         Project project = projectRepository.findById(id).orElseThrow(() ->
-                new EntityNotFoundException("no project with id: " + id));
+                new EntityNotFoundException("Project not found"));
 
         project.setName(request.name());
         return projectRepository.save(project).toDto();
@@ -71,10 +70,10 @@ public class ProjectService {
 
     public TaskDTO saveTask(Long projectId, Long callerId, CreateTaskRequest request) {
         Project project = projectRepository.findById(projectId).orElseThrow(() ->
-                new EntityNotFoundException("no project with id: " + projectId));
+                new EntityNotFoundException("Project not found"));
 
         User user = userRepository.findById(callerId).orElseThrow(() ->
-                new EntityNotFoundException("no project with id: " + callerId));
+                new EntityNotFoundException("User not found"));
 
         Task task = Task.builder()
                 .title(request.title())
