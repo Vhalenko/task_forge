@@ -24,16 +24,12 @@ public class TeamController {
 
     @GetMapping
     public ResponseEntity<List<TeamDTO>> findAll() {
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(teamService.findAll());
+        return ResponseEntity.ok(teamService.findAll());
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<TeamDTO> findById(@PathVariable Long id) {
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(teamService.findById(id));
+        return ResponseEntity.ok(teamService.findById(id));
     }
 
     @PostMapping
@@ -47,16 +43,12 @@ public class TeamController {
     @GetMapping("/{id}/users")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<UserDTO>> findUsers(@PathVariable Long id) {
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(teamService.findUsers(id));
+        return ResponseEntity.ok(teamService.findUsers(id));
     }
 
     @GetMapping("/{id}/projects")
     public ResponseEntity<List<ProjectDTO>> findProjects(@PathVariable Long id) {
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(teamService.findProjects(id));
+        return ResponseEntity.ok(teamService.findProjects(id));
     }
 
     @PostMapping("/{id}/projects")

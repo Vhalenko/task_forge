@@ -10,6 +10,7 @@ import com.taskforge.model.entity.Team;
 import com.taskforge.model.entity.User;
 import com.taskforge.repository.ProjectRepository;
 import com.taskforge.repository.TeamRepository;
+import com.taskforge.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,7 @@ import java.util.List;
 public class TeamService {
     private final TeamRepository teamRepository;
     private final ProjectRepository projectRepository;
+    private final UserRepository userRepository;
 
     public List<TeamDTO> findAll() {
         return teamRepository.findAll()
@@ -49,23 +51,23 @@ public class TeamService {
     }
 
     public List<UserDTO> findUsers(Long id) {
-        Team team = teamRepository.findById(id).orElseThrow(() ->
-                new EntityNotFoundException("Team not found"));
+        if (!teamRepository.existsById(id)) {
+            throw new EntityNotFoundException("Team not found");
+        }
 
-        return team.getUsers()
+        return userRepository.findByTeam_IdOrderByIdAsc(id)
                 .stream()
-                .sorted(Comparator.comparing(User::getId))
                 .map(User::toDto)
                 .toList();
     }
 
     public List<ProjectDTO> findProjects(Long id) {
-        Team team = teamRepository.findById(id).orElseThrow(() ->
-                new EntityNotFoundException("Team not found"));
+        if (!teamRepository.existsById(id)) {
+            throw new EntityNotFoundException("Team not found");
+        }
 
-        return team.getProjects()
+        return projectRepository.findByTeam_IdOrderByIdAsc(id)
                 .stream()
-                .sorted(Comparator.comparing(Project::getId))
                 .map(Project::toDto)
                 .toList();
     }

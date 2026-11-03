@@ -46,12 +46,12 @@ public class ProjectService {
     }
 
     public List<TaskDTO> findTasks(Long id) {
-        Project project = projectRepository.findById(id).orElseThrow(() ->
-                new EntityNotFoundException("Project not found"));
+        if (!projectRepository.existsById(id)) {
+            throw new EntityNotFoundException("Project not found");
+        }
 
-        return project.getTasks()
+        return taskRepository.findByProject_IdOrderByIdAsc(id)
                 .stream()
-                .sorted(Comparator.comparing(Task::getId))
                 .map(Task::toDto)
                 .toList();
     }

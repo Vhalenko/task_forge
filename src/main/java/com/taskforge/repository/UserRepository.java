@@ -7,9 +7,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import javax.swing.text.html.Option;
+import java.util.List;
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
+    List<User> findByTeam_IdOrderByIdAsc(Long teamId);
 
     Optional<User> findByEmailIgnoreCase(String email);
 

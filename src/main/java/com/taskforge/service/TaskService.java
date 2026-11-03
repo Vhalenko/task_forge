@@ -46,13 +46,10 @@ public class TaskService {
 
     @Transactional
     public TaskDTO update(Long id, UpdateTaskRequest request, Long callerId) {
-        User caller = userRepository.findById(callerId).orElseThrow(() ->
-                new EntityNotFoundException("User not found"));
-
         Task task = taskRepository.findById(id).orElseThrow(() ->
                         new EntityNotFoundException("Task not found"));
 
-        if (!task.getCreatedBy().equals(caller)) {
+        if (!task.getCreatedBy().getId().equals(callerId)) {
             throw new AccessDeniedException("You do not have permission to perform this action");
         }
 
@@ -70,13 +67,10 @@ public class TaskService {
     }
 
     public void delete(Long id, Long callerId) {
-        User caller = userRepository.findById(callerId).orElseThrow(() ->
-                new EntityNotFoundException("User not found"));
-
         Task task = taskRepository.findById(id).orElseThrow(() ->
                 new EntityNotFoundException("Task not found"));
 
-        if (!task.getCreatedBy().equals(caller)) {
+        if (!task.getCreatedBy().getId().equals(callerId)) {
             throw new AccessDeniedException("You do not have permission to perform this action");
         }
 
@@ -96,21 +90,21 @@ public class TaskService {
     }
 
     public List<CommentDTO> findComments(Long id) {
-        Task task = taskRepository.findById(id).orElseThrow(() ->
-                new EntityNotFoundException("Task not found"));
+        if (!taskRepository.existsById(id)) {
+            throw new EntityNotFoundException("Task not found");
+        }
 
-        return task.getComments()
+        return commentRepository.findByTask_IdOrderByCreatedAtDesc(id)
                 .stream()
-                .sorted(Comparator.comparing(Comment::getCreatedAt).reversed())
                 .map(Comment::toDto)
                 .toList();
     }
 
-    public CommentDTO saveComment(Long taskId, Long userId, CommentRequest request) {
+    public CommentDTO saveComment(Long taskId, Long callerId, CommentRequest request) {
         Task task = taskRepository.findById(taskId).orElseThrow(() ->
                 new EntityNotFoundException("Task not found"));
 
-        User user = userRepository.findById(userId).orElseThrow(() ->
+        User user = userRepository.findById(callerId).orElseThrow(() ->
                 new EntityNotFoundException("User not found"));
 
         Comment comment = Comment.builder()

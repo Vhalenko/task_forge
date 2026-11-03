@@ -24,18 +24,14 @@ public class TaskController {
 
     @GetMapping("/{id}")
     public ResponseEntity<TaskDTO> findById(@PathVariable Long id) {
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(taskService.findById(id));
+        return ResponseEntity.ok(taskService.findById(id));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<TaskDTO> update(@PathVariable Long id,
                                           @Valid @RequestBody UpdateTaskRequest request,
                                           @CurrentUserId Long callerId) {
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(taskService.update(id, request, callerId));
+        return ResponseEntity.ok(taskService.update(id, request, callerId));
     }
 
     @PatchMapping("/{taskId}/assignee/{userId}")
@@ -63,9 +59,7 @@ public class TaskController {
 
     @GetMapping("/{id}/comments")
     public ResponseEntity<List<CommentDTO>> findComments(@PathVariable Long id) {
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(taskService.findComments(id));
+        return ResponseEntity.ok(taskService.findComments(id));
     }
 
     @PostMapping("/{id}/comments")

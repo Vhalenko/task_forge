@@ -3,9 +3,7 @@ package com.taskforge.service;
 import com.taskforge.model.dto.CommentDTO;
 import com.taskforge.model.dto.request.CommentRequest;
 import com.taskforge.model.entity.Comment;
-import com.taskforge.model.entity.User;
 import com.taskforge.repository.CommentRepository;
-import com.taskforge.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,16 +14,12 @@ import org.springframework.security.access.AccessDeniedException;
 @RequiredArgsConstructor
 public class CommentService {
     private final CommentRepository commentRepository;
-    private final UserRepository userRepository;
 
     public void delete(Long id, Long callerId) {
-        User caller = userRepository.findById(callerId).orElseThrow(() ->
-                new EntityNotFoundException("User not found"));
-
         Comment comment = commentRepository.findById(id).orElseThrow(() ->
                 new EntityNotFoundException("Comment not found"));
 
-        if (!comment.getUser().equals(caller)) {
+        if (!comment.getUser().getId().equals(callerId)) {
             throw new AccessDeniedException("You do not have permission to perform this action");
         }
 
@@ -33,13 +27,10 @@ public class CommentService {
     }
 
     public CommentDTO update(Long id, CommentRequest request, Long callerId) {
-        User caller = userRepository.findById(callerId).orElseThrow(() ->
-                new EntityNotFoundException("User not found"));
-
         Comment comment = commentRepository.findById(id).orElseThrow(() ->
                 new EntityNotFoundException("Comment not found"));
 
-        if (!comment.getUser().equals(caller)) {
+        if (!comment.getUser().getId().equals(callerId)) {
             throw new AccessDeniedException("You do not have permission to perform this action");
         }
 

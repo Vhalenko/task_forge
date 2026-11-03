@@ -8,6 +8,7 @@ import com.taskforge.model.dto.request.UpdateUserStatusRequest;
 import com.taskforge.model.entity.Task;
 import com.taskforge.model.entity.Team;
 import com.taskforge.model.entity.User;
+import com.taskforge.repository.TaskRepository;
 import com.taskforge.repository.TeamRepository;
 import com.taskforge.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -15,7 +16,6 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -23,6 +23,7 @@ import java.util.List;
 public class UserService {
     private final UserRepository userRepository;
     private final TeamRepository teamRepository;
+    private final TaskRepository taskRepository;
 
     public UserDTO findById(Long id) {
         User user = userRepository.findById(id).orElseThrow(() ->
@@ -31,12 +32,12 @@ public class UserService {
     }
 
     public List<TaskDTO> findTasks(Long id) {
-        User user = userRepository.findById(id).orElseThrow(() ->
-                new EntityNotFoundException("User not found"));
+        if (!userRepository.existsById(id)) {
+            throw new EntityNotFoundException("User not found");
+        }
 
-        return user.getAssignedTasks()
+        return taskRepository.findDistinctByAssignees_IdOrderByIdAsc(id)
                 .stream()
-                .sorted(Comparator.comparing(Task::getId))
                 .map(Task::toDto)
                 .toList();
     }
@@ -63,7 +64,7 @@ public class UserService {
 
         caller.setFirstName(request.firstName());
         caller.setLastName(request.lastName());
-        caller.setEmail(request.email());
+        caller.setEmail(request.email().toLowerCase());
 
         if (!request.username().isBlank()) {
             caller.setUsername(request.username());

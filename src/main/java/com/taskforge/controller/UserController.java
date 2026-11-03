@@ -9,7 +9,6 @@ import com.taskforge.security.CurrentUserId;
 import com.taskforge.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -25,23 +24,17 @@ public class UserController {
 
     @GetMapping("/{id}")
     public ResponseEntity<UserDTO> findById(@PathVariable Long id) {
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(userService.findById(id));
+        return ResponseEntity.ok(userService.findById(id));
     }
 
     @GetMapping("/me")
     public ResponseEntity<UserDTO> findMe(@CurrentUserId Long callerId) {
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(userService.findById(callerId));
+        return ResponseEntity.ok(userService.findById(callerId));
     }
 
     @GetMapping("/me/tasks")
     public ResponseEntity<List<TaskDTO>> findMyTasks(@CurrentUserId Long callerId) {
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(userService.findTasks(callerId));
+        return ResponseEntity.ok(userService.findTasks(callerId));
     }
 
     @PatchMapping("/{id}/role")
@@ -69,8 +62,6 @@ public class UserController {
     @PutMapping("/me")
     public ResponseEntity<UserDTO> update(@Valid @RequestBody UpdateUserRequest request,
                                           @CurrentUserId Long callerId) {
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(userService.update(request, callerId));
+        return ResponseEntity.ok(userService.update(request, callerId));
     }
 }
