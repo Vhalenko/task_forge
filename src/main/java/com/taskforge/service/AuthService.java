@@ -9,7 +9,6 @@ import com.taskforge.model.enums.UserRole;
 import com.taskforge.repository.UserRepository;
 import com.taskforge.security.CustomUserDetails;
 import com.taskforge.security.JwtService;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -35,7 +34,6 @@ public class AuthService {
                 .firstName(request.firstName())
                 .lastName(request.lastName())
                 .email(email)
-                .username(request.username())
                 .passwordHash(passwordEncoder.encode(request.password()))
                 .role(UserRole.USER)
                 .build();
@@ -49,10 +47,10 @@ public class AuthService {
 
     public AuthDTO login(LoginRequest request) {
         User user = userRepository.findByEmailIgnoreCase(request.email())
-                .orElseThrow(() -> new EntityNotFoundException("IIIncorrect email or password"));
+                .orElseThrow(() -> new BadCredentialsException("Incorrect email or password"));
 
         if (!passwordEncoder.matches(request.password(), user.getPasswordHash())) {
-            throw new BadCredentialsException("incorrect password or email");
+            throw new BadCredentialsException("Incorrect email or password");
         }
 
         if (user.isBlocked()) {

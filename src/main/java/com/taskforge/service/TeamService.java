@@ -33,7 +33,7 @@ public class TeamService {
 
     public TeamDTO findById(Long id) {
         Team team = teamRepository.findById(id).orElseThrow(() ->
-                new EntityNotFoundException("no team with id: " + id));
+                new EntityNotFoundException("Team not found"));
         return team.toDto();
     }
 
@@ -49,30 +49,30 @@ public class TeamService {
     }
 
     public List<UserDTO> findUsers(Long id) {
-        Team team = teamRepository.findById(id).orElseThrow(() ->
-                new EntityNotFoundException("no team with id: " + id));
+        if (!teamRepository.existsById(id)) {
+            throw new EntityNotFoundException("Team not found");
+        }
 
-        return team.getUsers()
+        return userRepository.findByTeam_IdOrderByIdAsc(id)
                 .stream()
-                .sorted(Comparator.comparing(User::getId))
                 .map(User::toDto)
                 .toList();
     }
 
     public List<ProjectDTO> findProjects(Long id) {
-        Team team = teamRepository.findById(id).orElseThrow(() ->
-                new EntityNotFoundException("no team with id: " + id));
+        if (!teamRepository.existsById(id)) {
+            throw new EntityNotFoundException("Team not found");
+        }
 
-        return team.getProjects()
+        return projectRepository.findByTeam_IdOrderByIdAsc(id)
                 .stream()
-                .sorted(Comparator.comparing(Project::getId))
                 .map(Project::toDto)
                 .toList();
     }
 
     public ProjectDTO saveProject(Long id, ProjectRequest request) {
         Team team = teamRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("no team with id: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("Team not found"));
 
         Project project = Project.builder()
                 .name(request.name())

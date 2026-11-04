@@ -8,7 +8,7 @@ import com.taskforge.model.dto.request.UpdateUserStatusRequest;
 import com.taskforge.model.entity.Task;
 import com.taskforge.model.entity.Team;
 import com.taskforge.model.entity.User;
-import com.taskforge.model.enums.UserRole;
+import com.taskforge.repository.TaskRepository;
 import com.taskforge.repository.TeamRepository;
 import com.taskforge.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -16,9 +16,7 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.security.access.AccessDeniedException;
 
-import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -26,20 +24,21 @@ import java.util.List;
 public class UserService {
     private final UserRepository userRepository;
     private final TeamRepository teamRepository;
+    private final TaskRepository taskRepository;
 
     public UserDTO findById(Long id) {
         User user = userRepository.findById(id).orElseThrow(() ->
-                new EntityNotFoundException("no users with id: " + id));
+                new EntityNotFoundException("User not found"));
         return user.toDto();
     }
 
     public List<TaskDTO> findTasks(Long id) {
-        User user = userRepository.findById(id).orElseThrow(() ->
-                new EntityNotFoundException("no users with id: " + id));
+        if (!userRepository.existsById(id)) {
+            throw new EntityNotFoundException("User not found");
+        }
 
-        return user.getAssignedTasks()
+        return taskRepository.findDistinctByAssignees_IdOrderByIdAsc(id)
                 .stream()
-                .sorted(Comparator.comparing(Task::getId))
                 .map(Task::toDto)
                 .toList();
     }
@@ -47,7 +46,7 @@ public class UserService {
     @Transactional
     public void updateRole(Long id, UpdateRoleRequest request) {
         User user = userRepository.findById(id).orElseThrow(() ->
-                new EntityNotFoundException("no users with id: " + id));
+                new EntityNotFoundException("User not found"));
 
         user.setRole(request.role());
     }
@@ -55,37 +54,33 @@ public class UserService {
     @Transactional
     public void updateStatus(Long id, UpdateUserStatusRequest request) {
         User user = userRepository.findById(id).orElseThrow(() ->
-                new EntityNotFoundException("no users with id: " + id));
+                new EntityNotFoundException("User not found"));
 
         user.setBlocked(request.isBlocked());
     }
 
-    public UserDTO update(Long id, UpdateUserRequest request, Long callerId) {
+    public UserDTO update(UpdateUserRequest request, Long callerId) {
         User caller = userRepository.findById(callerId).orElseThrow(() ->
-                new EntityNotFoundException("no users with id: " + callerId));
+                new EntityNotFoundException("User not found"));
 
-        User user = userRepository.findById(id).orElseThrow(() ->
-                new EntityNotFoundException("no users with id: " + id));
+        caller.setFirstName(request.firstName());
+        caller.setLastName(request.lastName());
+        caller.setEmail(request.email().toLowerCase());
 
-        if (!user.equals(caller)) {
-            throw new AccessDeniedException("you cannot edit other users");
+        if (!request.username().isBlank()) {
+            caller.setUsername(request.username());
         }
 
-        user.setFirstName(request.firstName());
-        user.setLastName(request.lastName());
-        user.setUsername(request.username());
-        user.setEmail(request.email());
-
-        return userRepository.save(user).toDto();
+        return userRepository.save(caller).toDto();
     }
 
     @Transactional
     public void updateTeam(Long userId, Long teamId) {
         User user = userRepository.findById(userId).orElseThrow(() ->
-                new EntityNotFoundException("no users with id: " + userId));
+                new EntityNotFoundException("User not found"));
 
         Team team = teamRepository.findById(teamId).orElseThrow(() ->
-                new EntityNotFoundException("no users with id: " + teamId));
+                new EntityNotFoundException("Team not found"));
 
         user.setTeam(team);
     }
