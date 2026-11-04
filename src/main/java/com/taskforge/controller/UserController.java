@@ -25,23 +25,17 @@ public class UserController {
 
     @GetMapping("/{id}")
     public ResponseEntity<UserDTO> findById(@PathVariable Long id) {
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(userService.findById(id));
+        return ResponseEntity.ok(userService.findById(id));
     }
 
     @GetMapping("/me")
     public ResponseEntity<UserDTO> findMe(@CurrentUserId Long callerId) {
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(userService.findById(callerId));
+        return ResponseEntity.ok(userService.findById(callerId));
     }
 
     @GetMapping("/me/tasks")
     public ResponseEntity<List<TaskDTO>> findMyTasks(@CurrentUserId Long callerId) {
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(userService.findTasks(callerId));
+        return ResponseEntity.ok(userService.findTasks(callerId));
     }
 
     @PatchMapping("/{id}/role")
@@ -58,22 +52,13 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
-    @PatchMapping("/{userId}/teams/{teamId}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Void> updateTeam(@PathVariable(name = "userId") Long userId,
-                                           @PathVariable(name = "teamId") Long teamId) {
-        userService.updateTeam(userId, teamId);
-        return ResponseEntity.noContent().build();
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<UserDTO> update(@PathVariable Long id,
-                                          @Valid @RequestBody UpdateUserRequest request,
-                                          @CurrentUserId Long callerId) {
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(userService.update(id, request, callerId));
-    }
+//    @PatchMapping("/{userId}/teams/{teamId}")
+//    @PreAuthorize("hasRole('ADMIN')")
+//    public ResponseEntity<Void> updateTeam(@PathVariable(name = "userId") Long userId,
+//                                           @PathVariable(name = "teamId") Long teamId) {
+//        userService.updateTeam(userId, teamId);
+//        return ResponseEntity.noContent().build();
+//    }
 
     @PutMapping("/me")
     public ResponseEntity<UserDTO> updateMe(@Valid @RequestBody UpdateUserRequest request,

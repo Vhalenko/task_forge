@@ -10,6 +10,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,34 +22,32 @@ public class TaskController {
 
     private final TaskService taskService;
 
-    @GetMapping
-    public ResponseEntity<List<TaskDTO>> getAllTasks() {
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(taskService.findAll());
-    }
-
     @GetMapping("/{id}")
     public ResponseEntity<TaskDTO> findById(@PathVariable Long id) {
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(taskService.findById(id));
+        return ResponseEntity.ok(taskService.findById(id));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<TaskDTO> update(@PathVariable Long id,
                                           @Valid @RequestBody UpdateTaskRequest request,
                                           @CurrentUserId Long callerId) {
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(taskService.update(id, request, callerId));
+        return ResponseEntity.ok(taskService.update(id, request, callerId));
     }
 
     @PatchMapping("/{taskId}/assignee/{userId}")
-    public ResponseEntity<Void> updateAssignee(
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> assign(
             @PathVariable(name = "taskId") Long taskId,
             @PathVariable(name = "userId")Long userId) {
-        taskService.updateAssignee(taskId, userId);
+        taskService.assign(taskId, userId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{taskId}/assignee/me")
+    public ResponseEntity<Void> assignMe(
+            @PathVariable(name = "taskId") Long taskId,
+            @CurrentUserId Long callerId) {
+        taskService.assign(taskId, callerId);
         return ResponseEntity.noContent().build();
     }
 
@@ -60,9 +59,7 @@ public class TaskController {
 
     @GetMapping("/{id}/comments")
     public ResponseEntity<List<CommentDTO>> findComments(@PathVariable Long id) {
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(taskService.findComments(id));
+        return ResponseEntity.ok(taskService.findComments(id));
     }
 
     @PostMapping("/{id}/comments")

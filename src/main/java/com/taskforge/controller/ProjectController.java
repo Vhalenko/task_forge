@@ -2,7 +2,6 @@ package com.taskforge.controller;
 
 import com.taskforge.model.dto.ProjectDTO;
 import com.taskforge.model.dto.TaskDTO;
-import com.taskforge.model.dto.UserDTO;
 import com.taskforge.model.dto.request.CreateTaskRequest;
 import com.taskforge.model.dto.request.ProjectRequest;
 import com.taskforge.security.CurrentUserId;
@@ -25,23 +24,19 @@ public class ProjectController {
 
     @GetMapping("/{id}")
     public ResponseEntity<ProjectDTO> findById(@PathVariable Long id) {
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(projectService.findById(id));
+        return ResponseEntity.ok(projectService.findById(id));
     }
 
-    @GetMapping("/{id}/users")
-    public ResponseEntity<List<UserDTO>> findUsers(@PathVariable Long id) {
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(projectService.findUsers(id));
-    }
+//    @GetMapping("/{id}/users")
+//    public ResponseEntity<List<UserDTO>> findUsers(@PathVariable Long id) {
+//        return ResponseEntity
+//                .status(HttpStatus.OK)
+//                .body(projectService.findUsers(id));
+//    }
 
     @GetMapping("/{id}/tasks")
     public ResponseEntity<List<TaskDTO>> findTasks(@PathVariable Long id) {
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(projectService.findTasks(id));
+        return ResponseEntity.ok(projectService.findTasks(id));
     }
 
     @PostMapping("/{id}/tasks")
