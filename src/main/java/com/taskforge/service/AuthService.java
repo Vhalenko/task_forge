@@ -33,12 +33,13 @@ public class AuthService {
         User user = User.builder()
                 .firstName(request.firstName())
                 .lastName(request.lastName())
+                .username(request.username())
                 .email(email)
                 .passwordHash(passwordEncoder.encode(request.password()))
                 .role(UserRole.USER)
                 .build();
 
-        if (request.username().isBlank()) {
+        if (user.getUsername() == null || user.getUsername().isBlank()) {
             user.setUsername(request.firstName() + " " + request.lastName());
         }
 

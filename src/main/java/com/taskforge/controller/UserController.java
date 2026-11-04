@@ -9,6 +9,7 @@ import com.taskforge.security.CurrentUserId;
 import com.taskforge.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -58,12 +59,6 @@ public class UserController {
 //        userService.updateTeam(userId, teamId);
 //        return ResponseEntity.noContent().build();
 //    }
-
-    @PutMapping("/me")
-    public ResponseEntity<UserDTO> update(@Valid @RequestBody UpdateUserRequest request,
-                                          @CurrentUserId Long callerId) {
-        return ResponseEntity.ok(userService.update(request, callerId));
-    }
 
     @PutMapping("/me")
     public ResponseEntity<UserDTO> updateMe(@Valid @RequestBody UpdateUserRequest request,
