@@ -10,6 +10,7 @@ import com.taskforge.model.entity.Team;
 import com.taskforge.model.entity.User;
 import com.taskforge.repository.ProjectRepository;
 import com.taskforge.repository.TeamRepository;
+import com.taskforge.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,7 @@ import java.util.List;
 public class TeamService {
     private final TeamRepository teamRepository;
     private final ProjectRepository projectRepository;
+    private final UserRepository userRepository;
 
     public List<TeamDTO> findAll() {
         return teamRepository.findAll()
