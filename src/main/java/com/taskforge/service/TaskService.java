@@ -14,6 +14,7 @@ import com.taskforge.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -23,6 +24,7 @@ import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class TaskService {
@@ -63,6 +65,8 @@ public class TaskService {
             task.setCompletedAt(LocalDateTime.now());
         }
 
+        log.info("Task updated: taskId={}", id);
+
         return task.toDto();
     }
 
@@ -87,6 +91,7 @@ public class TaskService {
         if (!task.getAssignees().add(user)) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "User is already assigned");
         }
+        log.info("Task taskId={} was assigned to user userId={}", taskId, userId);
     }
 
     public List<CommentDTO> findComments(Long id) {
@@ -113,6 +118,9 @@ public class TaskService {
                 .task(task)
                 .user(user)
                 .build();
-        return  commentRepository.save(comment).toDto();
+
+        Comment savedComment = commentRepository.save(comment);
+        log.info("New comment created commentId={}", savedComment.getId());
+        return  savedComment.toDto();
     }
 }
