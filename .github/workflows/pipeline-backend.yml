@@ -4,25 +4,13 @@ on:
   push:
     branches:
       - develop
-    paths:
-        -  backend/**
-        - 'docker-compose.yml'
-        - .github/workflows/*-backend.yml
-        - 'mvnw'
-        - 'mvnw.cmd'
-        - '.mvn/**'
 
   pull_request:
     branches:
       - develop
       - main
-    paths:
-        -  backend/**
-        - 'docker-compose.yml'
-        - .github/workflows/*-backend.yml
-        - 'mvnw'
-        - 'mvnw.cmd'
-        - '.mvn/**'
+
+  workflow_dispatch:
 
 jobs:
   test:
