@@ -3,6 +3,7 @@ package com.taskforge.exception;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +31,12 @@ public class GlobalExceptionHandler {
             Exception ex,
             HttpServletRequest request) {
 
-        log.error("Unexpected error on {}", request.getRequestURI(), ex);
+        log.error(
+                "Unexpected server error: requestId={}, path={}",
+                MDC.get("requestId"),
+                request.getRequestURI(),
+                ex
+        );
 
         return error(
                 HttpStatus.INTERNAL_SERVER_ERROR,
@@ -70,6 +76,12 @@ public class GlobalExceptionHandler {
             EntityNotFoundException ex,
             HttpServletRequest request) {
 
+        log.debug(
+                "Resource not found: method={}, path={}",
+                request.getMethod(),
+                request.getRequestURI()
+        );
+
         return error(
                 HttpStatus.NOT_FOUND,
                 "RESOURCE_NOT_FOUND",
@@ -84,6 +96,11 @@ public class GlobalExceptionHandler {
             BadCredentialsException ex,
             HttpServletRequest request) {
 
+        log.info(
+                "Authentication failed: method={}, path={}",
+                request.getMethod(),
+                request.getRequestURI());
+
         return error(
                 HttpStatus.UNAUTHORIZED,
                 "UNAUTHORIZED",
@@ -96,6 +113,13 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(LockedException.class)
     public ResponseEntity<ExceptionResponse> locked(LockedException ex,
                                                     HttpServletRequest request) {
+
+        log.warn(
+                "Account locked: method={}, path={}, userId={}",
+                request.getMethod(),
+                request.getRequestURI(),
+                MDC.get("userId")
+        );
 
         return error(
                 HttpStatus.FORBIDDEN,
@@ -111,6 +135,13 @@ public class GlobalExceptionHandler {
             AccessDeniedException ex,
             HttpServletRequest request) {
 
+        log.warn(
+                "Access denied: method={}, path={}, userId={}",
+                request.getMethod(),
+                request.getRequestURI(),
+                MDC.get("userId")
+        );
+
         return error(
                 HttpStatus.FORBIDDEN,
                 "FORBIDDEN",
@@ -125,6 +156,13 @@ public class GlobalExceptionHandler {
             DataIntegrityViolationException ex,
             HttpServletRequest request) {
 
+        log.warn(
+                "Data conflict: method={}, path={}, userId={}",
+                request.getMethod(),
+                request.getRequestURI(),
+                MDC.get("userId")
+        );
+
         return error(
                 HttpStatus.CONFLICT,
                 "CONFLICT",
@@ -138,6 +176,13 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ExceptionResponse> handleResponseStatus(
             ResponseStatusException ex,
             HttpServletRequest request) {
+
+        log.info(
+                "Request failed: method={}, path={}, userId={}",
+                request.getMethod(),
+                request.getRequestURI(),
+                MDC.get("userId")
+        );
 
         HttpStatus status = HttpStatus.valueOf(ex.getStatusCode().value());
 
@@ -154,6 +199,13 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ExceptionResponse> handleMalformedJson(
             HttpMessageNotReadableException ex,
             HttpServletRequest request) {
+
+        log.debug(
+                "Invalid request body: method={}, path={}, userId={}",
+                request.getMethod(),
+                request.getRequestURI(),
+                MDC.get("userId")
+        );
 
         return error(
                 HttpStatus.BAD_REQUEST,

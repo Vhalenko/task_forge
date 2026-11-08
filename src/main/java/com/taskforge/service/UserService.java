@@ -15,10 +15,12 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -57,6 +59,12 @@ public class UserService {
                 new EntityNotFoundException("User not found"));
 
         user.setBlocked(request.isBlocked());
+
+        log.info(
+                "User block status changed: userId={}, blocked={}",
+                user.getId(),
+                request.isBlocked()
+        );
     }
 
     public UserDTO update(UpdateUserRequest request, Long callerId) {

@@ -6,6 +6,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.MDC;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -34,9 +35,22 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 if (SecurityContextHolder.getContext().getAuthentication() == null) {
                     UserDetails user = userDetailsService.loadUserByUsername(username);
                     if (user.isAccountNonLocked()) {
-                        var auth = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
-                        auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                        CustomUserDetails customUser = (CustomUserDetails) user;
+
+                        var auth = new UsernamePasswordAuthenticationToken(
+                                customUser,
+                                null,
+                                customUser.getAuthorities()
+                        );
+
+                        auth.setDetails(
+                                new WebAuthenticationDetailsSource()
+                                        .buildDetails(request)
+                        );
+
                         SecurityContextHolder.getContext().setAuthentication(auth);
+
+                        MDC.put("userId", customUser.getUser().getId().toString());
                     }
                 }
             }

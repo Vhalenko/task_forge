@@ -14,12 +14,14 @@ import com.taskforge.repository.TaskRepository;
 import com.taskforge.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ProjectService {
@@ -86,6 +88,10 @@ public class ProjectService {
                 .dueDate(request.dueDate())
                 .build();
 
-        return taskRepository.save(task).toDto();
+        Task savedTask = taskRepository.save(task);
+
+        log.info("New task created: taskId={}", savedTask.getId());
+
+        return savedTask.toDto();
     }
 }
