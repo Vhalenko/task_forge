@@ -68,7 +68,6 @@ public class ProjectService {
 
     public void delete(Long id) {
         projectRepository.deleteById(id);
-        log.info("Task was deleted: taskId={}", id);
     }
 
     public TaskDTO saveTask(Long projectId, Long callerId, CreateTaskRequest request) {

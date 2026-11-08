@@ -3,3 +3,7 @@ target
 .idea
 *.iml
 /postman
+.env
+.env.*
+application-local.properties
+application-local.yml

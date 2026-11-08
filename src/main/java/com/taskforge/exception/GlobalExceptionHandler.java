@@ -114,7 +114,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ExceptionResponse> locked(LockedException ex,
                                                     HttpServletRequest request) {
 
-        log.error("Locked error on {}", request.getRequestURI(), ex);
+        log.warn(
+                "Account locked: method={}, path={}, userId={}",
+                request.getMethod(),
+                request.getRequestURI(),
+                MDC.get("userId")
+        );
 
         return error(
                 HttpStatus.FORBIDDEN,
@@ -151,7 +156,12 @@ public class GlobalExceptionHandler {
             DataIntegrityViolationException ex,
             HttpServletRequest request) {
 
-        log.error("Data conflict error on {}", request.getRequestURI(), ex);
+        log.warn(
+                "Data conflict: method={}, path={}, userId={}",
+                request.getMethod(),
+                request.getRequestURI(),
+                MDC.get("userId")
+        );
 
         return error(
                 HttpStatus.CONFLICT,
@@ -167,7 +177,12 @@ public class GlobalExceptionHandler {
             ResponseStatusException ex,
             HttpServletRequest request) {
 
-        log.error("Response status error on {}", request.getRequestURI(), ex);
+        log.info(
+                "Request failed: method={}, path={}, userId={}",
+                request.getMethod(),
+                request.getRequestURI(),
+                MDC.get("userId")
+        );
 
         HttpStatus status = HttpStatus.valueOf(ex.getStatusCode().value());
 
@@ -185,7 +200,12 @@ public class GlobalExceptionHandler {
             HttpMessageNotReadableException ex,
             HttpServletRequest request) {
 
-        log.error("Invalid request body error on {}", request.getRequestURI(), ex);
+        log.debug(
+                "Invalid request body: method={}, path={}, userId={}",
+                request.getMethod(),
+                request.getRequestURI(),
+                MDC.get("userId")
+        );
 
         return error(
                 HttpStatus.BAD_REQUEST,

@@ -79,6 +79,8 @@ public class TaskService {
         }
 
         taskRepository.deleteById(id);
+
+        log.info("Task was deleted: taskId={}", id);
     }
 
     @Transactional
@@ -91,7 +93,11 @@ public class TaskService {
         if (!task.getAssignees().add(user)) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "User is already assigned");
         }
-        log.info("Task taskId={} was assigned to user userId={}", taskId, userId);
+        log.info(
+                "Task assigned: taskId={}, assignedUserId={}",
+                taskId,
+                userId
+        );
     }
 
     public List<CommentDTO> findComments(Long id) {
@@ -120,7 +126,14 @@ public class TaskService {
                 .build();
 
         Comment savedComment = commentRepository.save(comment);
-        log.info("New comment created commentId={}", savedComment.getId());
+
+        log.info(
+                "Comment created: commentId={}, taskId={}, userId={}",
+                savedComment.getId(),
+                taskId,
+                callerId
+        );
+
         return  savedComment.toDto();
     }
 }

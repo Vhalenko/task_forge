@@ -60,9 +60,11 @@ public class UserService {
 
         user.setBlocked(request.isBlocked());
 
-        if (request.isBlocked()) {
-            log.info("User was blocked; userId={}", user.getId());
-        }
+        log.info(
+                "User block status changed: userId={}, blocked={}",
+                user.getId(),
+                request.isBlocked()
+        );
     }
 
     public UserDTO update(UpdateUserRequest request, Long callerId) {
