@@ -4,19 +4,13 @@ on:
   push:
     branches:
       - develop
-    paths:
-        -  frontend/**
-        - 'docker-compose.yml'
-        - .github/workflows/*-frontend.yml
 
   pull_request:
     branches:
       - develop
       - main
-    paths:
-      -  frontend/**
-      - 'docker-compose.yml'
-      - .github/workflows/*-frontend.yml
+
+  workflow_dispatch:
 
 permissions:
   contents: read
