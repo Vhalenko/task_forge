@@ -1,0 +1,21 @@
+$kind: http-request
+url: http://localhost:8080/api/tasks/7
+method: PUT
+body:
+  type: json
+  content: "{\r
+
+    \    \"title\": \"huyhyhuyhuy\",\r
+
+    \    \"description\": \"Create and test the POST endpoint for tasks\",\r
+
+    \    \"priority\": \"HIGH\",\r
+
+    \    \"status\": \"OPEN\",\r
+
+    \    \"completedAt\": \"2026-10-11T14:30:00\",\r
+
+    \    \"assignedTo\": 2\r
+
+    }"
+order: 5000

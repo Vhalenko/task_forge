@@ -1,0 +1,18 @@
+$kind: http-request
+url: 'http://localhost:8080/api/tasks'
+method: POST
+order: 4000
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "title": "Implement task creation endpoint",
+      "description": "Create and test the POST endpoint for tasks",
+      "priority": "HIGH",
+      "status": "OPEN",
+      "createdBy": 2,
+      "assignedTo": 2
+    }
