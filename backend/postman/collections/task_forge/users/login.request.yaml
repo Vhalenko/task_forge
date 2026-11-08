@@ -1,0 +1,13 @@
+$kind: http-request
+url: http://localhost:8080/api/auth/login
+method: GET
+body:
+  type: json
+  content: "{\r
+
+    \  \"email\": \"alex.johnson@example.com\",\r
+
+    \  \"passwordHash\": \"sdfsdfdsf\"\r
+
+    }"
+order: 2000

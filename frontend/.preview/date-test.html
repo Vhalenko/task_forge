@@ -1,0 +1,23 @@
+<!doctype html>
+<html style="color-scheme: dark; background: #07090d">
+  <head>
+    <style>
+      body { margin: 24px; font-family: sans-serif; color: #e2e7ef; background: #07090d; }
+      input {
+        background: #171c26; color: #f2f5f9;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 12px; padding: 8px; font-size: 16px; display: block;
+      }
+      .inverted::-webkit-calendar-picker-indicator { filter: invert(0.85); opacity: 0.75; cursor: pointer; }
+      .forced-light { color-scheme: light; }
+    </style>
+  </head>
+  <body>
+    <p>color-scheme dark, no filter</p>
+    <input type="date" value="2026-11-05" />
+    <p>color-scheme dark + invert filter</p>
+    <input class="inverted" type="date" value="2026-11-05" />
+    <p>forced light scheme + invert filter</p>
+    <input class="inverted forced-light" type="date" value="2026-11-05" />
+  </body>
+</html>
