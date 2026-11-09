@@ -25,6 +25,7 @@ public class TeamService {
     private final ProjectRepository projectRepository;
     private final UserRepository userRepository;
 
+
     public List<TeamDTO> findAll() {
         return teamRepository.findAll()
                 .stream()

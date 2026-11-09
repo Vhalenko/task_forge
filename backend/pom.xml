@@ -46,6 +46,8 @@
 			<scope>runtime</scope>
 		</dependency>
 
+		<!-- Redis -->
+
 		<!-- Security -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
