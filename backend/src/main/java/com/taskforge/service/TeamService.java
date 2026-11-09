@@ -13,9 +13,6 @@ import com.taskforge.repository.TeamRepository;
 import com.taskforge.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
@@ -37,14 +34,12 @@ public class TeamService {
                 .toList();
     }
 
-    @Cacheable(value = "teamCache", key = "#id")
     public TeamDTO findById(Long id) {
         Team team = teamRepository.findById(id).orElseThrow(() ->
                 new EntityNotFoundException("Team not found"));
         return team.toDto();
     }
 
-    @CachePut(value = "teamCache", key = "#result.id")
     public TeamDTO save(TeamRequest request) {
         Team team = Team.builder()
                 .name(request.name())
@@ -52,7 +47,6 @@ public class TeamService {
         return teamRepository.save(team).toDto();
     }
 
-    @CacheEvict(value = "teamCache", key = "#id")
     public void delete(Long id) {
         teamRepository.deleteById(id);
     }
