@@ -1,4 +1,4 @@
-﻿package com.taskforge.config;
+package com.taskforge.config;
 
 import com.taskforge.model.entity.Team;
 import org.springframework.cache.CacheManager;
