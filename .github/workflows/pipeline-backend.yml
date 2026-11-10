@@ -42,24 +42,13 @@ jobs:
         working-directory: ./backend
         run: |
           echo "Test summary:"
+          grep -R -h "Tests run:" target/surefire-reports || true
 
-          if [ -d target/surefire-reports ]; then
-            grep -R -h -E \
-              "Tests run:.*(Failures: [1-9]|Errors: [1-9])" \
-              target/surefire-reports || echo "No failed tests found in reports."
-          fi
-
-          if [ "${{ steps.tests.outcome }}" = "failure" ]; then
-            echo ""
-            echo "Relevant errors:"
-            grep -R -n -m 30 -E \
-              "Caused by:|Exception:|<failure|<error" \
-              target/surefire-reports 2>/dev/null || true
-
-            echo ""
-            echo "Last Maven output:"
-            tail -n 40 maven-test.log
-          fi
+          echo ""
+          echo "First application context error:"
+          grep -R -n -m 1 -B 10 -A 50 \
+            "Failed to load ApplicationContext\|Caused by:\|BeanCreationException\|RedisConnectionFailureException" \
+            target/surefire-reports || true
 
       - name: Upload test reports
         if: always()
