@@ -1,10 +1,9 @@
-name: TaskForge Backend CI
+name: TaskForge Backend Pipeline
 
 on:
   push:
     branches:
       - develop
-      - main
 
   pull_request:
     branches:
@@ -15,7 +14,7 @@ on:
 
 jobs:
   test:
-    name: Backend tests
+    name: Build and test backend
     runs-on: ubuntu-latest
 
     steps:
@@ -26,64 +25,9 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: "21"
+          java-version: '21'
           cache: maven
 
-      - name: Run tests
-        id: tests
+      - name: Build and run tests
         working-directory: ./backend
-        continue-on-error: true
-        run: |
-          ./mvnw -B -ntp -Dstyle.color=never test \
-            > maven-test.log 2>&1
-
-      - name: Show test summary
-        if: always()
-        working-directory: ./backend
-        run: |
-          echo "Test summary:"
-          grep -R -h "Tests run:" target/surefire-reports || true
-
-          echo ""
-          echo "First application context error:"
-          grep -R -n -m 1 -B 10 -A 50 \
-            "Failed to load ApplicationContext\|Caused by:\|BeanCreationException\|RedisConnectionFailureException" \
-            target/surefire-reports || true
-
-      - name: Upload test reports
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: backend-test-reports
-          path: |
-            backend/target/surefire-reports
-            backend/maven-test.log
-          if-no-files-found: ignore
-
-      - name: Fail workflow when tests fail
-        if: steps.tests.outcome == 'failure'
-        run: exit 1
-
-  build:
-    name: Build backend
-    runs-on: ubuntu-latest
-    needs: test
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Set up Java 21
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: "21"
-          cache: maven
-
-      - name: Build application
-        working-directory: ./backend
-        run: |
-          ./mvnw -B -ntp -q \
-            -Dstyle.color=never \
-            -DskipTests \
-            package
+        run: ./mvnw clean verify
