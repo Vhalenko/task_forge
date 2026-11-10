@@ -1,6 +1,6 @@
 services:
   frontend:
-    image: vhalenko/taskforge-frontend:1.0.1
+    image: vhalenko/taskforge-frontend:latest
     container_name: taskforge-frontend
     ports:
       - "3000:80"
@@ -9,7 +9,7 @@ services:
     restart: unless-stopped
 
   backend:
-    image: vhalenko/taskforge-backend:1.0.1
+    image: vhalenko/taskforge-backend:latest
     container_name: taskforge-backend
     ports:
       - "8080:8080"
@@ -27,6 +27,8 @@ services:
   database:
     image: postgres:17
     container_name: taskforge-database
+    ports:
+      - "5432:5432"
     environment:
       POSTGRES_DB: taskforge
       POSTGRES_USER: ${DB_USERNAME}
@@ -49,7 +51,10 @@ services:
     container_name: taskforge-redis
     ports:
       - "6379:6379"
+    volumes:
+      - redis_data:/data
     restart: unless-stopped
 
 volumes:
   postgres_data:
+  redis_data:
