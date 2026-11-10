@@ -16,12 +16,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
-import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Service
@@ -30,7 +29,6 @@ public class TeamService {
     private final TeamRepository teamRepository;
     private final ProjectRepository projectRepository;
     private final UserRepository userRepository;
-    private final RedisTemplate<String, Team> redisTemplate;
 
 
     public List<TeamDTO> findAll() {
@@ -41,19 +39,11 @@ public class TeamService {
                 .toList();
     }
 
+    @Cacheable(value = "team", key = "#id")
     public TeamDTO findById(Long id) {
-        log.info("getting team {}", id);
-        Team teamFromCache = redisTemplate.opsForValue()
-                .get("teamCache:" + id);
-
-        if (teamFromCache != null) {
-            return teamFromCache.toDto();
-        }
-
         Team team = teamRepository.findById(id).orElseThrow(() ->
                 new EntityNotFoundException("Team not found"));
 
-        redisTemplate.opsForValue().set("teamCache:" + id, team, 1, TimeUnit.MINUTES);
         return team.toDto();
     }
 
@@ -65,7 +55,7 @@ public class TeamService {
         return teamRepository.save(team).toDto();
     }
 
-    @CacheEvict(value = "team", key = "id")
+    @CacheEvict(value = "team", key = "#id")
     public void delete(Long id) {
         teamRepository.deleteById(id);
     }
