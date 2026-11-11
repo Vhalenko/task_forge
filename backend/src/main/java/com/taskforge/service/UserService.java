@@ -1,21 +1,21 @@
 package com.taskforge.service;
 
+import com.taskforge.constant.CacheNames;
 import com.taskforge.model.dto.TaskDTO;
 import com.taskforge.model.dto.UserDTO;
 import com.taskforge.model.dto.request.UpdateRoleRequest;
 import com.taskforge.model.dto.request.UpdateUserRequest;
 import com.taskforge.model.dto.request.UpdateUserStatusRequest;
 import com.taskforge.model.entity.Task;
-import com.taskforge.model.entity.Team;
 import com.taskforge.model.entity.User;
 import com.taskforge.repository.TaskRepository;
-import com.taskforge.repository.TeamRepository;
 import com.taskforge.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,7 +25,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
-    private final TeamRepository teamRepository;
     private final TaskRepository taskRepository;
 
     public UserDTO findById(Long id) {
@@ -34,6 +33,7 @@ public class UserService {
         return user.toDto();
     }
 
+    @Cacheable(value = CacheNames.TASKS_BY_USER, key = "#id")
     public List<TaskDTO> findTasks(Long id) {
         if (!userRepository.existsById(id)) {
             throw new EntityNotFoundException("User not found");
@@ -80,17 +80,6 @@ public class UserService {
         }
 
         return userRepository.save(caller).toDto();
-    }
-
-    @Transactional
-    public void updateTeam(Long userId, Long teamId) {
-        User user = userRepository.findById(userId).orElseThrow(() ->
-                new EntityNotFoundException("User not found"));
-
-        Team team = teamRepository.findById(teamId).orElseThrow(() ->
-                new EntityNotFoundException("Team not found"));
-
-        user.setTeam(team);
     }
 
     public UserDTO updateMe(@Valid UpdateUserRequest request, Long callerId) {

@@ -27,13 +27,6 @@ public class ProjectController {
         return ResponseEntity.ok(projectService.findById(id));
     }
 
-//    @GetMapping("/{id}/users")
-//    public ResponseEntity<List<UserDTO>> findUsers(@PathVariable Long id) {
-//        return ResponseEntity
-//                .status(HttpStatus.OK)
-//                .body(projectService.findUsers(id));
-//    }
-
     @GetMapping("/{id}/tasks")
     public ResponseEntity<List<TaskDTO>> findTasks(@PathVariable Long id) {
         return ResponseEntity.ok(projectService.findTasks(id));
@@ -52,9 +45,7 @@ public class ProjectController {
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ProjectDTO> update(@PathVariable Long id, @Valid @RequestBody ProjectRequest request) {
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(projectService.update(id, request));
+        return ResponseEntity.ok(projectService.update(id, request));
     }
 
     @DeleteMapping("/{id}")
