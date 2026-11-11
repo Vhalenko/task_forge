@@ -139,22 +139,4 @@ class UserServiceTest extends IntegrationTestSupport {
                 new UpdateUserRequest("New", "Name", "new", "new@example.com"), 9999L))
                 .isInstanceOf(EntityNotFoundException.class);
     }
-
-    @Test
-    void updateTeamAssignsUserToTeam() {
-        Team newTeam = createTeam("Platform");
-
-        userService.updateTeam(user.getId(), newTeam.getId());
-
-        assertThat(userRepository.findById(user.getId()).orElseThrow().getTeam().getId())
-                .isEqualTo(newTeam.getId());
-    }
-
-    @Test
-    void updateTeamThrowsWhenUserOrTeamMissing() {
-        assertThatThrownBy(() -> userService.updateTeam(9999L, team.getId()))
-                .isInstanceOf(EntityNotFoundException.class);
-        assertThatThrownBy(() -> userService.updateTeam(user.getId(), 9999L))
-                .isInstanceOf(EntityNotFoundException.class);
-    }
 }

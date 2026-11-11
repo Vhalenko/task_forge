@@ -52,14 +52,6 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
-//    @PatchMapping("/{userId}/teams/{teamId}")
-//    @PreAuthorize("hasRole('ADMIN')")
-//    public ResponseEntity<Void> updateTeam(@PathVariable(name = "userId") Long userId,
-//                                           @PathVariable(name = "teamId") Long teamId) {
-//        userService.updateTeam(userId, teamId);
-//        return ResponseEntity.noContent().build();
-//    }
-
     @PutMapping("/me")
     public ResponseEntity<UserDTO> updateMe(@Valid @RequestBody UpdateUserRequest request,
                                           @CurrentUserId Long callerId) {

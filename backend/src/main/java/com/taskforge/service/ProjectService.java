@@ -1,8 +1,8 @@
 package com.taskforge.service;
 
+import com.taskforge.constant.CacheNames;
 import com.taskforge.model.dto.ProjectDTO;
 import com.taskforge.model.dto.TaskDTO;
-import com.taskforge.model.dto.UserDTO;
 import com.taskforge.model.dto.request.CreateTaskRequest;
 import com.taskforge.model.dto.request.ProjectRequest;
 import com.taskforge.model.entity.Project;
@@ -15,10 +15,11 @@ import com.taskforge.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Comparator;
 import java.util.List;
 
 @Slf4j
@@ -36,17 +37,7 @@ public class ProjectService {
         return project.toDto();
     }
 
-    public List<UserDTO> findUsers(Long id) {
-        Project project = projectRepository.findById(id).orElseThrow(() ->
-                new EntityNotFoundException("Project not found"));
-
-        return project.getUsers()
-                .stream()
-                .sorted(Comparator.comparing(User::getId))
-                .map(User::toDto)
-                .toList();
-    }
-
+    @Cacheable(value = CacheNames.TASKS_BY_PROJECT, key = "#id")
     public List<TaskDTO> findTasks(Long id) {
         if (!projectRepository.existsById(id)) {
             throw new EntityNotFoundException("Project not found");
@@ -70,6 +61,7 @@ public class ProjectService {
         projectRepository.deleteById(id);
     }
 
+    @CacheEvict(value = CacheNames.TASKS_BY_PROJECT, key = "#projectId")
     public TaskDTO saveTask(Long projectId, Long callerId, CreateTaskRequest request) {
         Project project = projectRepository.findById(projectId).orElseThrow(() ->
                 new EntityNotFoundException("Project not found"));
