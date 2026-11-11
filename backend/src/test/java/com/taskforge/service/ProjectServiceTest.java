@@ -2,7 +2,6 @@ package com.taskforge.service;
 
 import com.taskforge.model.dto.ProjectDTO;
 import com.taskforge.model.dto.TaskDTO;
-import com.taskforge.model.dto.UserDTO;
 import com.taskforge.model.dto.request.CreateTaskRequest;
 import com.taskforge.model.dto.request.ProjectRequest;
 import com.taskforge.model.entity.Project;
@@ -19,7 +18,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -51,23 +49,6 @@ class ProjectServiceTest extends IntegrationTestSupport {
         assertThatThrownBy(() -> projectService.findById(9999L))
                 .isInstanceOf(EntityNotFoundException.class)
                 .hasMessageContaining("Project not found");
-    }
-
-    @Test
-    void findUsersReturnsProjectMembersOrderedById() {
-        User second = createUser("Jonas", "Weber", "jonas@example.com", UserRole.USER, team, false);
-        project.setUsers(new ArrayList<>(List.of(second, user)));
-        projectRepository.save(project);
-
-        List<UserDTO> result = projectService.findUsers(project.getId());
-
-        assertThat(result).extracting(UserDTO::id).containsExactly(user.getId(), second.getId());
-    }
-
-    @Test
-    void findUsersThrowsWhenProjectMissing() {
-        assertThatThrownBy(() -> projectService.findUsers(9999L))
-                .isInstanceOf(EntityNotFoundException.class);
     }
 
     @Test

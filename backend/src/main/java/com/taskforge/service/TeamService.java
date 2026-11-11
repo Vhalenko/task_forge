@@ -1,5 +1,6 @@
 package com.taskforge.service;
 
+import com.taskforge.constant.CacheNames;
 import com.taskforge.model.dto.ProjectDTO;
 import com.taskforge.model.dto.TeamDTO;
 import com.taskforge.model.dto.UserDTO;
@@ -39,7 +40,7 @@ public class TeamService {
                 .toList();
     }
 
-    @Cacheable(value = "team", key = "#id")
+    @Cacheable(value = CacheNames.TEAM, key = "#id")
     public TeamDTO findById(Long id) {
         Team team = teamRepository.findById(id).orElseThrow(() ->
                 new EntityNotFoundException("Team not found"));
@@ -47,7 +48,7 @@ public class TeamService {
         return team.toDto();
     }
 
-    @CachePut(value = "team", key = "#result.id")
+    @CachePut(value = CacheNames.TEAM, key = "#result.id")
     public TeamDTO save(TeamRequest request) {
         Team team = Team.builder()
                 .name(request.name())
@@ -55,11 +56,12 @@ public class TeamService {
         return teamRepository.save(team).toDto();
     }
 
-    @CacheEvict(value = "team", key = "#id")
+    @CacheEvict(value = CacheNames.TEAM, key = "#id")
     public void delete(Long id) {
         teamRepository.deleteById(id);
     }
 
+    @Cacheable(value = CacheNames.USERS_BY_TEAM, key = "#id")
     public List<UserDTO> findUsers(Long id) {
         if (!teamRepository.existsById(id)) {
             throw new EntityNotFoundException("Team not found");
@@ -71,6 +73,7 @@ public class TeamService {
                 .toList();
     }
 
+    @Cacheable(value = CacheNames.PROJECTS_BY_TEAM, key = "#id")
     public List<ProjectDTO> findProjects(Long id) {
         if (!teamRepository.existsById(id)) {
             throw new EntityNotFoundException("Team not found");
@@ -82,6 +85,7 @@ public class TeamService {
                 .toList();
     }
 
+    @CacheEvict(value = CacheNames.PROJECTS_BY_TEAM, key = "#id")
     public ProjectDTO saveProject(Long id, ProjectRequest request) {
         Team team = teamRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Team not found"));
