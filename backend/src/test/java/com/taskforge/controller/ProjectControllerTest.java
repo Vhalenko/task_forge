@@ -108,7 +108,7 @@ class ProjectControllerTest extends IntegrationTestSupport {
                         .header(HttpHeaders.AUTHORIZATION, bearer(admin))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json(request)))
-                .andExpect(status().isCreated())
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("Renamed project"));
     }
 
