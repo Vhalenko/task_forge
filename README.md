@@ -47,6 +47,24 @@ The repository is organized as a monorepo and can be run locally with Docker Com
 - Docker and Docker Compose
 - GitHub Actions
 
+## Screenshots
+
+### Dashboard
+
+![TaskForge dashboard](docs/images/dashboard.png)
+
+### Task details
+
+![Task details page](docs/images/my-tasks.png)
+
+### Admin
+
+![TaskForge dashboard](docs/images/admin.png)
+
+### Auth form
+
+![Task details page](docs/images/register.png)
+
 ## Architecture
 
 ```text
@@ -79,11 +97,6 @@ Create a root `.env` file next to `docker-compose.yml`:
 DB_USERNAME=postgres
 DB_PASSWORD=change-me
 JWT_SECRET=base64-encoded-secret
-
-# Optional. Keep these only if Loki integration is enabled.
-GRAFANA_LOKI_URL=https://your-loki-endpoint/loki/api/v1/push
-GRAFANA_LOKI_USER=your-loki-user
-GRAFANA_LOKI_TOKEN=your-loki-token
 ```
 
 Never commit `.env` or real credentials. Use `.env.example` for shareable configuration documentation.
@@ -225,10 +238,6 @@ The complete request collection is available under `backend/postman/`.
 - JWT secrets should be long, random and different per environment.
 - Production deployments should use HTTPS and restrict CORS origins to the real frontend domain.
 - Do not expose PostgreSQL or Redis publicly in production unless access is protected by a private network and authentication.
-
-## Current portfolio scope
-
-The project demonstrates a complete junior-level backend workflow: layered architecture, DTO mapping, validation, authorization, persistence, caching, automated tests, Docker and CI. Possible next improvements include OpenAPI documentation, database migrations with Flyway, Testcontainers for PostgreSQL/Redis integration tests, structured JSON logging and a deployment environment with health checks and monitoring.
 
 ## License
 
