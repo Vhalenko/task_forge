@@ -59,11 +59,11 @@ The repository is organized as a monorepo and can be run locally with Docker Com
 
 ### Admin
 
-![TaskForge dashboard](docs/images/admin.png)
+![Admin page](docs/images/admin.png)
 
 ### Auth form
 
-![Task details page](docs/images/register.png)
+![Auth page](docs/images/register.png)
 
 ## Architecture
 
